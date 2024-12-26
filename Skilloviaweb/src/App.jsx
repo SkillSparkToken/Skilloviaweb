@@ -5,6 +5,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import LandingPage from "./pages/LandingPage/LandingPage";
+import ExamplePage from "./componets/Example";
 
 
 
@@ -22,6 +23,11 @@ const router = createBrowserRouter([
     element: <LandingPage/>,
   },
  
+
+  {
+    path: "/ex",
+    element: <ExamplePage/>,
+  },
  
 
 ]);
