@@ -6,3 +6,9 @@
 body {
   font-family: "Albert Sans", serif;
 }
+
+.sty {
+  font-family: "Playfair Display", serif;
+
+  font-style:italic;
+}
