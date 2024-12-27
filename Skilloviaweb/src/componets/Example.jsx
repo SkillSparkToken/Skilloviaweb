@@ -3,6 +3,9 @@ import Button from './Button'; // Adjust the import path based on your file stru
 import { Phone, Mail, Heart, Settings } from 'lucide-react'; // Import any icons you want to use
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../componets/Tabs';
 import { Home, User } from 'lucide-react'; // If you want to use icons
+import FileUpload from './Upload';
+import { Input, TextArea, Select } from './Input';
+import {  Building } from 'lucide-react';
 
 
 
@@ -10,6 +13,18 @@ const ExamplePage = () => {
   // Example click handler
   const handleClick = () => {
     console.log('Button clicked!');
+  };
+
+  const handleFileSelect = (file) => {
+    // Do something with the file
+    console.log('Selected file:', file);
+    
+    // Example: Read the file as a data URL
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      console.log('File contents:', e.target.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -123,6 +138,77 @@ const ExamplePage = () => {
         </TabsContent>
       </Tabs>
     </div>
+
+
+    <FileUpload    onFileSelect={handleFileSelect} />
+
+    {/* input */}
+
+    <section className="bl px-[4rem] my-20">
+
+  
+
+    <Input
+            label="Company"
+            name="company"
+            placeholder="Enter your company name"
+         className='bg-green-600'
+            icon={Building}
+          />
+
+<Input
+            label="Full Name"
+            name="fullName"
+            placeholder="Enter your full name"
+        
+            icon={User}
+            required
+          />
+
+          <Input
+            label="Email"
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+        
+            icon={Mail}
+            required
+          />
+        
+
+       
+          <Input
+            label="Phone Number"
+            name="phone"
+            placeholder="Enter your phone number"
+        
+            icon={Phone}
+          />
+
+
+
+    <TextArea
+          label="Description"
+          name="description"
+          placeholder="Tell us about yourself or your project"
+         
+        />
+
+
+<Select
+          label="Role"
+          name="role"
+       
+          options={[
+            { value: '', label: 'Select your role' },
+            { value: 'developer', label: 'Developer' },
+            { value: 'designer', label: 'Designer' },
+            { value: 'manager', label: 'Manager' },
+            { value: 'other', label: 'Other' }
+          ]}
+        />
+
+</section>
 
     </>
   );
