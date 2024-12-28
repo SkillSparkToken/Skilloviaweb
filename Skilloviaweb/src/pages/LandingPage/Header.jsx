@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
+import Button from '../../componets/Button';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="bg-[#f8fdf3] py-4 px-6 shadow-sm">
-      <nav className="max-w-7xl mx-auto flex items-center justify-between">
+    <header className=" py-4 px-6 fixed w-full left-0 right-0 z-50 h-[4rem] shadow-sm">
+      <nav className="lg:px-[5rem] flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <span className="text-2xl font-bold text-green-800">⚡</span>
-          <span className="text-2xl font-bold text-green-800">Skillovia</span>
+        <img src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1735327571/SkilSpark%20%286%29/WHT_Horiz._Logo_2x_mwst8n.png" alt=""  className=' w-[200px] h-[50px]  object-contain'/>
         </div>
 
         {/* Mobile menu button */}
@@ -42,11 +42,13 @@ const Header = () => {
         </button>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-8">
-          <a href="/blog" className="text-gray-700 hover:text-gray-900">Blog</a>
-          <a href="/contact" className="text-gray-700 hover:text-gray-900">Contact</a>
-          <a href="/faqs" className="text-gray-700 hover:text-gray-900">FAQs</a>
-          <button className="bg-green-400 text-gray-900 px-6 py-2 rounded-full hover:bg-green-500 transition-colors">
+        <div className="hidden md:flex items-center gap-12">
+          <a href="/blog" className="text-slate-50 font-semibold hover:text-gray-900">Blog</a>
+          <a href="/contact" className="text-slate-50 font-semibold hover:text-gray-900">Contact</a>
+          <a href="/faqs" className="text-slate-50 font-semibold hover:text-gray-900">FAQs</a>
+
+         
+          <button className="bg-primary text-secondary font-semibold px-6 py-3 rounded-full hover:bg-green-500 transition-colors">
             Get Started
           </button>
         </div>
@@ -58,7 +60,8 @@ const Header = () => {
               <a href="/blog" className="text-gray-700 hover:text-gray-900">Blog</a>
               <a href="/contact" className="text-gray-700 hover:text-gray-900">Contact</a>
               <a href="/faqs" className="text-gray-700 hover:text-gray-900">FAQs</a>
-              <button className="bg-green-400 text-gray-900 px-6 py-2 rounded-full hover:bg-green-500 transition-colors">
+              
+              <button className="bg-primary text-secondary px-6 py-2 rounded-full hover:bg-green-500 transition-colors">
                 Get Started
               </button>
             </div>

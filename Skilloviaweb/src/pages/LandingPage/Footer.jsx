@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <div className="bg-green-700 min-h-48">
+    <div className="bg-off min-h-48 px-[4rem] pt-8">
  
 
  
@@ -11,9 +11,10 @@ const Footer = () => {
             {/* Logo and copyright */}
             <div className="mb-6 md:mb-0">
               <div className="flex items-center gap-2">
-                <span className="text-2xl font-bold">⚡ Skillovia</span>
+              <img src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1735327781/WHT_Horiz._Logo_bbkq77.png"
+              className=' w-[200px] h-[50px]  object-contain' alt="" />
               </div>
-              <p className="text-sm text-gray-600">© 2024 Present. All rights reserved.</p>
+              <p className="text-[12px] text-gray-600">© 2024 Present. All rights reserved.</p>
             </div>
 
             {/* Footer links */}

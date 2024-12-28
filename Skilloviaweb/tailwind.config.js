@@ -12,7 +12,9 @@ export default {
         base: "#1A202C",
         dash:" #F3F4F6",
         text: "#171D14",
-        gray:"#D0D5DD"
+        gray:"#D0D5DD",
+        off:"#F6FCEB",
+        darkSec:"#0F150C",
       },
     },
   },
