@@ -26,17 +26,17 @@ const HowSkilloviaWorks = () => {
   ];
 
   return (
-    <div className="bg-darkSec min-h-screen text-white p-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="bg-darkSec min-h-screen text-white px-[4rem] py-[4rem]">
+      <div className=" mx-auto">
         <div className="mb-12">
           <p className="text-sm mb-2">How It Works</p>
-          <h1 className="text-5xl font-bold mb-8">
+          <h1 className="text-[4rem] font-bold leading-[4.2rem]">
             How Does<br />
             Skillovia Work?
           </h1>
         </div>
 
-        <div className="space-y-12">
+        <div className="space-y-12 pl-[30rem]">
           {steps.map((step, index) => (
             <div key={index} className="flex items-start gap-6">
               <div className="bg-[#86E461] rounded-full p-3 mt-1">
