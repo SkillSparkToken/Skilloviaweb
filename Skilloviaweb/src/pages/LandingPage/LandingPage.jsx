@@ -5,10 +5,11 @@ import Hero from './Hero'
 import WhatisSkillovia from './WhatisSkillovia'
 import HowSkilloviaWorks from './HowItWorks'
 import WhyLoveSkillovia from './Whyus'
+import HomeLayout from '../../utils/HomeLayout'
 
 const LandingPage = () => {
   return (
-    <LandingUtili>
+    <HomeLayout>
 
  
 
@@ -21,7 +22,7 @@ const LandingPage = () => {
 <WhyLoveSkillovia />
 
    
-    </LandingUtili>
+    </HomeLayout>
   )
 }
 
