@@ -7,6 +7,7 @@ import {
 import LandingPage from "./pages/LandingPage/LandingPage";
 import ExamplePage from "./componets/Example";
 import ContactForm from "./pages/contact-us/Contact";
+import FAQSection from "./pages/faq/Faq";
 
 
 
@@ -33,6 +34,11 @@ const router = createBrowserRouter([
   {
     path: "/contact",
     element: <ContactForm/>,
+  },
+
+  {
+    path: "/faqs",
+    element: <FAQSection/>,
   },
  
 
