@@ -10,6 +10,7 @@ import ContactForm from "./pages/contact-us/Contact";
 import FAQSection from "./pages/faq/Faq";
 import Blog from "./pages/blog/Blog";
 import BlogDetail from "./pages/blog/BlogDetails";
+import LoginPage from "./pages/auth/login/Login";
 
 
 
@@ -55,7 +56,15 @@ const router = createBrowserRouter([
     path: "/blog-details",
     element: <BlogDetail/>,
   },
- 
+//  ===== auth ======= //
+
+{
+  path: "/login",
+  element: <LoginPage/>,
+},
+
+
+//  ===== auth ======= //
  
 
 ]);

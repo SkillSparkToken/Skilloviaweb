@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Button from '../../componets/Button';
+import { Link } from 'react-router-dom';
 
 const HomeHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,9 +49,9 @@ const HomeHeader = () => {
           <a href="/faqs" className="text-slate-50 font-semibold hover:text-gray-900">FAQs</a>
 
          
-          <button className="bg-primary text-secondary font-semibold px-6 py-3 rounded-full hover:bg-green-500 transition-colors">
+          <Link to ="/login" className="bg-primary text-secondary font-semibold px-6 py-3 rounded-full hover:bg-green-500 transition-colors">
             Get Started
-          </button>
+          </Link>
         </div>
 
         {/* Mobile Navigation */}
