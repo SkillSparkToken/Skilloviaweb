@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowUpRight, ChevronRight } from 'lucide-react';
 import LandingUtili from '../../utils/LandingUtili';
+import { Link } from 'react-router-dom';
 
 const Blog = () => {
   const stories = [
@@ -94,8 +95,11 @@ const Blog = () => {
                   <h3 className="font-medium mb-2">{story.title}</h3>
                   <p className="text-sm text-gray-600">{story.description}</p>
                 </div>
-                
+                <Link to = "/blog-details">
                 <ArrowUpRight  className="w-5 h-5 text-gray-400 mt-1 transition-transform duration-300 group-hover:translate-x-1" />
+
+                </Link>
+
               </div>
             </div>
           ))}

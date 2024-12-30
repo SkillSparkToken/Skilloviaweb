@@ -9,6 +9,7 @@ import ExamplePage from "./componets/Example";
 import ContactForm from "./pages/contact-us/Contact";
 import FAQSection from "./pages/faq/Faq";
 import Blog from "./pages/blog/Blog";
+import BlogDetail from "./pages/blog/BlogDetails";
 
 
 
@@ -46,6 +47,13 @@ const router = createBrowserRouter([
   {
     path: "/blog",
     element: <Blog/>,
+  },
+ 
+
+
+  {
+    path: "/blog-details",
+    element: <BlogDetail/>,
   },
  
  
