@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import Button from '../../componets/Button';
 
-const Header = () => {
+const HomeHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className=" py-4 px-6 fixed w-full left-0 right-0 z-50 h-[4rem] shadow-s">
+    <header className=" py-4 px-6 fixed w-full left-0 right-0 z-50 h-[4rem] shadow-sm">
       <nav className="lg:px-[5rem] flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-2">
-        <img src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1735327781/WHT_Horiz._Logo_bbkq77.png" alt=""  className=' w-[200px] h-[50px]  object-contain'/>
+        <img src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1735327571/SkilSpark%20%286%29/WHT_Horiz._Logo_2x_mwst8n.png" alt=""  className=' w-[200px] h-[50px]  object-contain'/>
         </div>
 
         {/* Mobile menu button */}
@@ -43,10 +43,9 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-12">
-          <a href="/" className="text-secondary font-semibold hover:text-gray-900">Home</a>
-          <a href="/blog" className="text-secondary font-semibold hover:text-gray-900">Blog</a>
-          <a href="/contact" className="text-secondary font-semibold hover:text-gray-900">Contact</a>
-          <a href="/faqs" className="text-secondary font-semibold hover:text-gray-900">FAQs</a>
+          <a href="/blog" className="text-slate-50 font-semibold hover:text-gray-900">Blog</a>
+          <a href="/contact" className="text-slate-50 font-semibold hover:text-gray-900">Contact</a>
+          <a href="/faqs" className="text-slate-50 font-semibold hover:text-gray-900">FAQs</a>
 
          
           <button className="bg-primary text-secondary font-semibold px-6 py-3 rounded-full hover:bg-green-500 transition-colors">
@@ -58,9 +57,9 @@ const Header = () => {
         {isMenuOpen && (
           <div className="absolute top-16 left-0 right-0 bg-[#f8fdf3] shadow-lg md:hidden">
             <div className="flex flex-col items-center gap-4 py-4">
-              <a href="/blog" className="text-secondary hover:text-gray-900">Blog</a>
-              <a href="/contact" className="text-secondary hover:text-gray-900">Contact</a>
-              <a href="/faqs" className="text-secondary hover:text-gray-900">FAQs</a>
+              <a href="/blog" className="text-gray-700 hover:text-gray-900">Blog</a>
+              <a href="/contact" className="text-gray-700 hover:text-gray-900">Contact</a>
+              <a href="/faqs" className="text-gray-700 hover:text-gray-900">FAQs</a>
               
               <button className="bg-primary text-secondary px-6 py-2 rounded-full hover:bg-green-500 transition-colors">
                 Get Started
@@ -73,4 +72,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default HomeHeader;
