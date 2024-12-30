@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import ExamplePage from "./componets/Example";
+import ContactForm from "./pages/contact-us/Contact";
 
 
 
@@ -27,6 +28,11 @@ const router = createBrowserRouter([
   {
     path: "/ex",
     element: <ExamplePage/>,
+  },
+
+  {
+    path: "/contact",
+    element: <ContactForm/>,
   },
  
 
