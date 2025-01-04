@@ -7,7 +7,7 @@ import Slider from '../Slider';
 
 
 
-const LoginPage = () => {
+const Phone = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -20,33 +20,24 @@ const LoginPage = () => {
     <div className="flex min-h-screen bg-gray-50 md:p-8 p-4 bg-[#f6fceb]">
       <div className="flex flex-col w-full md:w-1/2 md:p-8">
         <div className="max-w-md w-full mx-auto">
-          <h2 className="text-3xl font-bold mb-6">Welcome back!</h2>
+          <h2 className="text-3xl font-bold mb-1">Create Account</h2>
+          <p className='mb-6'>We need your phone number</p>
           
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+              Input your phone number
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 bg-[#f0f6e6] focus:ring-green-400 focus:outline-none"
-                placeholder="john@example.com"
+                placeholder="Enter phone number"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border  border-[#BFCAB4] bg-[#f0f6e6] rounded-md focus:ring-2 focus:ring-green-400 focus:outline-none"
-              />
-            </div>
+      
             
             <button
               type="submit"
@@ -83,9 +74,9 @@ const LoginPage = () => {
           </form>
           
           <p className="mt-4 text-sm text-gray-600">
-            Don't have an account? 
-            <a href="/signup" className="text-blue-600 hover:underline ml-1">
-              Sign up
+            Already  have an account? 
+            <a href="/login" className="text-blue-600 hover:underline ml-1">
+            login
             </a>
           </p>
           
@@ -101,4 +92,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default Phone;
