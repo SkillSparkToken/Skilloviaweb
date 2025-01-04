@@ -11,6 +11,8 @@ import FAQSection from "./pages/faq/Faq";
 import Blog from "./pages/blog/Blog";
 import BlogDetail from "./pages/blog/BlogDetails";
 import LoginPage from "./pages/auth/login/Login";
+import Phone from "./pages/auth/signup/Phone";
+import Otp from "./pages/auth/signup/Otp";
 
 
 
@@ -61,6 +63,18 @@ const router = createBrowserRouter([
 {
   path: "/login",
   element: <LoginPage/>,
+},
+
+
+{
+  path: "/signup",
+  element: <Phone/>,
+},
+
+
+{
+  path: "/otp",
+  element: <Otp/>,
 },
 
 

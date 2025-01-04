@@ -1,11 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../../componets/Button';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scroll, setScroll] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () =>{
+      if(window.scrollY > 30) {
+        setScroll(true);
+      }else{
+        setScroll(false);
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+
+  }, [])
 
   return (
-    <header className=" py-4 px-6 fixed w-full left-0 right-0 z-50 h-[4rem] shadow-s">
+    <header className={`py-4 px-6 fixed w-full left-0 right-0 z-50 h-[4rem]  shadow-s ${scroll ? "bg-slate-100 h-[5rem] ": " "}`} >
       <nav className="lg:px-[5rem] flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-2">
