@@ -30,7 +30,7 @@ const ExploreSection = () => {
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold">Explore categories</h2>
             <Link 
-              to="/categories" 
+              to="/explore-list" 
               className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
             >
               View all
@@ -41,7 +41,7 @@ const ExploreSection = () => {
             {categories.map(category => (
               <Link 
                 key={category.id} 
-                to={`/category/${category.id}`}
+                to={`/explore-list`}
                 className="group cursor-pointer flex flex-col items-center flex-shrink-0"
               >
                 <div className="w-36 h-36 mb-2 overflow-hidden rounded-lg">

@@ -6,8 +6,8 @@ const Verify = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 mb-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Email Verification Card */}
-      <div
-        // to="/activate-account"
+      <Link
+        to="/settings/kyc"
         className="bg-[#246868] text-white p-6 rounded-lg hover:bg-teal-800 transition-colors"
       >
         <h2 className="text-xl font-semibold mb-2">Please verify your email</h2>
@@ -19,7 +19,7 @@ const Verify = () => {
           <span className="font-medium">Activate your account</span>
           <ArrowRight className="w-5 h-5 ml-2" />
         </div>
-      </div>
+      </Link>
 
       {/* Complete Profile Card */}
       <Link 

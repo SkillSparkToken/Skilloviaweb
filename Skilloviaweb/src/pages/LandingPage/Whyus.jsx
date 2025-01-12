@@ -96,19 +96,19 @@ const WhyLoveSkillovia = () => {
     <>
       <div className="bg-[#bfcab4] min-h-screen">
         <div className="mx-auto">
-          <section className="desc px-[4rem] py-[5rem]">
+          <section className="desc px-4 lg:px-[4rem] py-8 lg:py-[5rem]">
             <p className="text-lg text-gray-600 mb-2">Why Join Skillovia?</p>
-            <h2 className="text-[4rem] font-bold leading-[4.2rem] text-gray-800">
+            <h2 className="lg:text-[4rem] text-[2rem] font-bold lg:leading-[4.2rem] text-gray-800">
               Why You'll Love<br />
               Skillovia
             </h2>
           </section>
 
-          <div className=" pb-16 grid lg:grid-cols-2 gap-10 px-[4rem]  ">
+          <div className=" pb-16 grid lg:grid-cols-2 gap-10 px-4 lg:px-[4rem]  ">
             {benefits.map((benefit, index) => (
               <div
                 key={index}
-                className="bg-off rounded-xl py-[4rem] px-[5rem] transition-all hover:shadow-xl group relative overflow-hidden"
+                className="bg-off rounded-xl py-[4rem] px-4 lg:px-[5rem] transition-all hover:shadow-xl group relative overflow-hidden"
               >
                
                     <section className=" flex rounded-r-2xl bnorder">
@@ -141,7 +141,7 @@ const WhyLoveSkillovia = () => {
       </div>
   
       <section className="ad">
-        <img src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1735327744/iPhone_Mockup3_nvown8.png" className='h-[120vh] w-full object-cover' alt="" />
+        <img src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1736693122/rsz_iphone_mockup3_nvown8_s3wrr2.png" className='h-[120vh] w-full object-cover' alt="" />
     </section>
     </>
   );

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import MessagingInterface from '../Message';
+import { ArrowLeft, Send } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ChatInterface = () => {
   const [message, setMessage] = useState('');
@@ -39,32 +40,37 @@ const ChatInterface = () => {
   };
 
   return (
-    <>
-    {/* <MessagingInterface /> */}
-
-    <div className="max-w-md mx-auto h-screen block lg:hidden">
+    <div className="flex flex-col h-screen  max-w-md mx-auto relative">
       {/* Header */}
-      <div className="bg-gray-200 p-4 flex items-center space-x-3">
-        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
-          S
+      <div className="bg-input text-slate-800 p-4 flex items-center space-x-4">
+        <Link to ='/messages' className="hover:bg-green-700 p-1 rounded-full">
+          <ArrowLeft size={24} />
+        </Link>
+        <div className="flex items-center space-x-3">
+          <div className=" flex items-center justify-center text-green-600 font-medium">
+            <img src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1736675545/49bb166c64fe8b5ed4a14b52d7fa0540_godgpk.jpg" className='rounded-full h-8 w-8 object-cover' alt="" />
+          </div>
+          <span className="font-medium">Schowalter LLC</span>
         </div>
-        <span className="font-medium">Schowalter LLC</span>
       </div>
 
-      {/* Chat Container */}
-      <div className="p-4 space-y-4 h-[calc(100vh-132px)] overflow-y-auto">
+      {/* Messages Container */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg) => (
-          <div key={msg.id} className={`flex flex-col ${msg.sender === 'other' ? 'items-end' : ''}`}>
+          <div 
+            key={msg.id} 
+            className={`flex flex-col ${msg.sender === 'other' ? 'items-start' : 'items-end'}`}
+          >
             {msg.timestamp && (
               <div className="text-xs text-gray-500 mb-1 text-center w-full">
                 {msg.timestamp}
               </div>
             )}
             <div
-              className={`max-w-[80%] rounded-2xl p-3 whitespace-pre-line ${
+              className={`max-w-[80%] rounded-lg p-3 whitespace-pre-line ${
                 msg.sender === 'other'
-                  ? 'bg-green-600 text-white'
-                  : 'bg-input text-black'
+                  ? 'bg-input text-black'
+                  : 'bg-secondary text-white'
               }`}
             >
               {msg.text}
@@ -73,38 +79,25 @@ const ChatInterface = () => {
         ))}
       </div>
 
-      {/* Message Input */}
-      <form onSubmit={handleSubmit} className="p-4 bg-white border-t">
-        <div className="flex items-center space-x-2">
+      {/* Fixed Message Input */}
+      <div className="bg-gray-100 border-t border-gray-200 p-4">
+        <form onSubmit={handleSubmit} className="flex items-center space-x-2">
           <input
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Write a message"
-            className="flex-1 p-2 border rounded-lg focus:outline-none focus:border-gray-400"
+            placeholder="Type a message"
+            className="flex-1 bg-white rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
           <button
             type="submit"
-            className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-lg"
+            className="bg-secondary text-white p-2 rounded-full hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
           >
-            <svg
-              className="w-5 h-5 transform rotate-90 text-green-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-              />
-            </svg>
+            <Send size={20} />
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
-    </>
   );
 };
 

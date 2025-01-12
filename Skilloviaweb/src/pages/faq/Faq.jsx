@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import LandingUtili from '../../utils/LandingUtili';
+import Loader from '../../componets/Loader';
 
 const FAQSection = () => {
   const [openItem, setOpenItem] = useState(0);
@@ -40,12 +41,12 @@ const FAQSection = () => {
 
   return (
     <LandingUtili>
-
+<Loader />
  
-    <div className="min-h-screen bg-[#F6FCEB] p-6 pt-[12rem]">
+    <div className="min-h-screen bg-[#F6FCEB] lg:p-6 lg:pt-[10rem] px-4 pt-[6rem]">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">Frequently Asked Questions</h1>
+          <h1 className="lg:text-4xl text-3xl font-bold mb-2">Frequently Asked Questions</h1>
           <p className="text-gray-600">
             Here are answers to some of the most common questions about using Skillovia.
           </p>
@@ -78,11 +79,11 @@ const FAQSection = () => {
           ))}
         </div>
 
-        <div className="mt-12 flex justify-center gap-4">
-          <button className="bg-primary hover:bg-green-500 text-secondary font-semibold px-6 py-3 rounded-full transition-colors duration-200">
+        <div className="mt-12 lg:flex justify-center space-y-3 lg:space-y-0 gap-4 mb-8" >
+          <button className="bg-primary hover:bg-green-500 text-secondary w-full font-semibold px-6 py-3 rounded-full transition-colors duration-200">
             Sign Up for Free
           </button>
-          <button className="border border-gray-300 font-semibold hover:border-gray-400 px-6 py-3 rounded-full transition-colors duration-200">
+          <button className="border border-gray-300 font-semibold w-full  hover:border-gray-400 px-6 py-3 rounded-full transition-colors duration-200">
             Explore Skillovia Now
           </button>
         </div>

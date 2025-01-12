@@ -24,16 +24,16 @@ const WhatisSkillovia = () => {
 
   return (
     <div className=" mx-autvo  bg-[#bfcab4] pb-[7rem]">
-      <section className="mb-8 px-[4rem] py-[5rem]">
-        <h1 className="text-[4rem] font-bold  text-darkSec ">
+      <section className="lg:mb-8 px-4 lg:px-[4rem] py-12 lg:py-[5rem]">
+        <h1 className="tlg:ext-[4rem] text-[1.8rem] font-bold  text-darkSec ">
           Hyperlocal Skill Sharing,
         </h1>
-        <h2 className="text-[4rem] font-bold leading-[3rem] text-darkSec">
+        <h2 className="lg:text-[4rem]  text-[1.8rem] font-bold lg:leading-[3rem] text-darkSec">
           Right Around the Corner
         </h2>
       </section>
 
-      <div className="space--[4rem] grid grid-cols-3 px-[4rem] gap-8">
+      <div className="space--[4rem] grid grid-cols-1 lg:grid-cols-3 px-4 lg:px-[4rem] gap-8">
         {sections.map((section, index) => (
           <div
             key={index}

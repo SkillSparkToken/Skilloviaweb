@@ -6,11 +6,11 @@ const BlogDetail = () => {
     <LandingUtili>
 
  
-    <div className="min-h-screen bg-[#F6FCEB] pt-[8rem]">
+    <div className="min-h-screen bg-[#F6FCEB] lg:pt-[8rem] pt-[6rem]">
       {/* Header */}
       <header className="mb-8">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold pt-8 mb-2 ">
+          <h1 className="lg:text-5xl text-3xl font-bold pt-8 mb-2 ">
             Insights and Stories from the Skillovia Community
           </h1>
           <p className="text-gray-600 text-lg">

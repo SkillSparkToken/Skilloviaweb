@@ -1,90 +1,61 @@
 import React, { useState } from 'react';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import BackButton from '../../../../../componets/Back';
+import UserLayout from '../../../UserLayout/UserLayout';
 
 const PasswordReset = () => {
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showOldPassword, setShowOldPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const handlePasswordToggle = (field) => {
-    if (field === 'old') setShowOldPassword(!showOldPassword);
-    if (field === 'new') setShowNewPassword(!showNewPassword);
-    if (field === 'confirm') setShowConfirmPassword(!showConfirmPassword);
-  };
+  const [showPasswords, setShowPasswords] = useState({
+    old: false,
+    new: false,
+    confirm: false
+  });
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f9fce8]">
-      <div className="w-full max-w-md px-4">
-        <button className="text-gray-700 text-lg font-medium mb-4">
-          ← Password Reset
-        </button>
-        <form className="bg-white p-6 rounded-lg shadow-md space-y-4">
-          {/* Old Password */}
-          <div className="relative">
-            <label className="block text-gray-700 text-sm mb-1">Old Password</label>
-            <input
-              type={showOldPassword ? 'text' : 'password'}
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
-            />
-            <button
-              type="button"
-              className="absolute top-1/2 transform -translate-y-1/2 right-3 text-gray-500"
-              onClick={() => handlePasswordToggle('old')}
-            >
-              👁️
-            </button>
-          </div>
+    <UserLayout>
 
-          {/* New Password */}
-          <div className="relative">
-            <label className="block text-gray-700 text-sm mb-1">New Password</label>
-            <input
-              type={showNewPassword ? 'text' : 'password'}
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
-            />
-            <button
-              type="button"
-              className="absolute top-1/2 transform -translate-y-1/2 right-3 text-gray-500"
-              onClick={() => handlePasswordToggle('new')}
-            >
-              👁️
-            </button>
-          </div>
 
-          {/* Confirm Password */}
-          <div className="relative">
-            <label className="block text-gray-700 text-sm mb-1">Confirm New Password</label>
-            <input
-              type={showConfirmPassword ? 'text' : 'password'}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
-            />
-            <button
-              type="button"
-              className="absolute top-1/2 transform -translate-y-1/2 right-3 text-gray-500"
-              onClick={() => handlePasswordToggle('confirm')}
-            >
-              👁️
-            </button>
-          </div>
-
-          {/* Save Changes Button */}
-          <button
-            type="submit"
-            className="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-          >
-            Save changes
-          </button>
-        </form>
+    <div className="max-w-4xl mx-auto px-4 ">
+      <div className="flex items-center mb-6 gap-2">
+        <BackButton label='Password Reset' />
+      
       </div>
+
+      <form className="space-y-4">
+        {[
+          { label: 'Old Password', key: 'old' },
+          { label: 'New Password', key: 'new' },
+          { label: 'Confirm New Password', key: 'confirm' }
+        ].map((field) => (
+          <div key={field.key} className="space-y-1">
+            <div className="relative">
+              <input
+                type={showPasswords[field.key] ? 'text' : 'password'}
+                placeholder="••••"
+                className="w-full p-3 rounded-lg bg-input border-gray border focus:outline-none focus:ring-1 focus:ring-green-500 pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPasswords(prev => ({
+                  ...prev,
+                  [field.key]: !prev[field.key]
+                }))}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+              >
+                {showPasswords[field.key] ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
+        ))}
+
+        <button
+          type="submit"
+          className="w-full bg-[#8fff7b] text-black rounded-lg py-3 font-medium hover:bg-[#7aee66] transition-colors"
+        >
+          Save changes
+        </button>
+      </form>
     </div>
+    </UserLayout>
   );
 };
 

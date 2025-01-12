@@ -48,11 +48,11 @@ const Blog = () => {
     <LandingUtili>
 
   
-    <div className="min-h-screen bg-[#F6FCEB] p-6 pt-[10rem]">
+    <div className="min-h-screen bg-[#F6FCEB] lg:p-6 px-4 pt-[6rem] lg:pt-[10rem]">
       <div className="max-w-7xl mx-auto">
         {/* Hero Section */}
         <div className="mb-12">
-          <div className="flex justify-between items-start mb-6">
+          <div className="lg:flex justify-between items-start mb-6">
             <h1 className="text-4xl font-bold max-w-xl">
               Insights and Stories from the Skillovia Community
             </h1>

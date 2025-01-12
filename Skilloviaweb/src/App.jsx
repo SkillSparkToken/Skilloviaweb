@@ -39,6 +39,8 @@ import SkillDetails from "./pages/User-Dashboard/Settings/Myskillovia/MySkills/S
 import AddSkill from "./pages/User-Dashboard/Settings/Myskillovia/MySkills/AddSkill/AddSkill";
 import ChatMobile from "./pages/User-Dashboard/Chat/MessageMobile/ChatMobile";
 import ChatMobileDetails from "./pages/User-Dashboard/Chat/MessageMobile/ChatMobileDetails";
+import PasswordReset from "./pages/User-Dashboard/Settings/General/Security/PasswordRest";
+import ExploreList from "./pages/User-Dashboard/Explore/ExploreList";
 
 
 
@@ -129,6 +131,12 @@ const router = createBrowserRouter([
   element: <ExploreSection/>,
 },
 
+{
+  path: "/explore-list",
+  element: <ExploreList/>,
+},
+
+
 //  ===== settings======= //
 {
   path: "/settings",
@@ -174,6 +182,11 @@ const router = createBrowserRouter([
 {
   path: "/settings/payment",
   element: <Payment/>,
+},
+
+{
+  path: "/settings/password",
+  element: <PasswordReset/>,
 },
 
 {

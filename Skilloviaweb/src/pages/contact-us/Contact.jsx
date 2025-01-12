@@ -25,13 +25,14 @@ const ContactForm = () => {
 
   return (
     <LandingUtili>
+      
 
   
 
-    <div className="min-h-screen bg-[#F6FCEB] p-6 pt-[6rem] flex flex-col items-center">
+    <div className="min-h-screen bg-[#F6FCEB] lg:p-6 pt-[6rem] lg:pt-[10rem] px-4 mb-4 flex flex-col items-center">
 
     <div>
-            <h1 className="text-4xl font-bold mb-2">Get in Touch with Us</h1>
+            <h1 className="lg:text-4xl text-3xl font-bold mb-2">Get in Touch with Us</h1>
             <p className="text-gray-600">Have questions or feedback? We're here to help.</p>
           </div>
       <div className="w-full max-w-6xl mx-auto grid md:grid-cols-2 gap-16 mt-16">
