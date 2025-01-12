@@ -17,6 +17,10 @@ import SignUp from "./pages/auth/signup/S";
 import User from "./pages/User-Dashboard/UserLayout/User";
 import Settings from "./pages/User-Dashboard/Settings/Settings";
 import Message from "./pages/User-Dashboard/Chat/Message";
+import Profile from "./pages/User-Dashboard/Settings/Myskillovia/Profile/Profile";
+import KYCPage from "./pages/User-Dashboard/Settings/Myskillovia/Kyc/Kyc";
+import Identification from "./pages/User-Dashboard/Settings/Myskillovia/Kyc/Identification";
+import UtilityBill from "./pages/User-Dashboard/Settings/Myskillovia/Kyc/UtilityBill";
 
 
 
@@ -104,6 +108,26 @@ const router = createBrowserRouter([
 {
   path: "/settings",
   element: <Settings/>,
+},
+
+{
+  path: "/settings/profile",
+  element: <Profile/>,
+},
+
+{
+  path: "/settings/kyc",
+  element: <KYCPage/>,
+},
+
+{
+  path: "/settings/kyc/identification",
+  element: <Identification/>,
+},
+
+{
+  path: "/settings/kyc/bill",
+  element: <UtilityBill/>,
 },
 
 
