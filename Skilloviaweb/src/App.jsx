@@ -13,6 +13,10 @@ import BlogDetail from "./pages/blog/BlogDetails";
 import LoginPage from "./pages/auth/login/Login";
 import Phone from "./pages/auth/signup/Phone";
 import Otp from "./pages/auth/signup/Otp";
+import SignUp from "./pages/auth/signup/S";
+import User from "./pages/User-Dashboard/UserLayout/User";
+import Settings from "./pages/User-Dashboard/Settings/Settings";
+import Message from "./pages/User-Dashboard/Chat/Message";
 
 
 
@@ -73,13 +77,41 @@ const router = createBrowserRouter([
 
 
 {
+  path: "/s",
+  element: <SignUp/>,
+},
+
+
+{
   path: "/otp",
   element: <Otp/>,
 },
 
 
 //  ===== auth ======= //
- 
+
+
+
+
+//  ===== user ======= //
+
+{
+  path: "/user",
+  element: <User/>,
+},
+
+
+{
+  path: "/settings",
+  element: <Settings/>,
+},
+
+
+{
+  path: "/messages",
+  element: <Message/>,
+},
+
 
 ]);
 
