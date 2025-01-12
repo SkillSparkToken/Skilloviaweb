@@ -27,6 +27,13 @@ import NotificationSettings from "./pages/User-Dashboard/Settings/General/Notifi
 import Security from "./pages/User-Dashboard/Settings/General/Security/Security";
 import Bookings from "./pages/User-Dashboard/Bookings/Booking";
 import ExploreSection from "./pages/User-Dashboard/Explore/Explore";
+import BookProfile from "./pages/User-Dashboard/Bookings/Book-A-Service/BookProfile";
+import BookService from "./pages/User-Dashboard/Bookings/Book-A-Service/BookService";
+import BookingForm from "./pages/User-Dashboard/Bookings/Book-A-Service/BookForm";
+import OutwardDetails from "./pages/User-Dashboard/Bookings/Outward/OutwardDetails";
+import OutwardProgress from "./pages/User-Dashboard/Bookings/Outward/OutwardProgress";
+import InwardDetails from "./pages/User-Dashboard/Bookings/Inward/InwardDetails";
+import Community from "./pages/User-Dashboard/Community/Community";
 
 
 
@@ -176,8 +183,44 @@ const router = createBrowserRouter([
   element: <Bookings/>,
 },
 
+{
+  path: "/book-profile",
+  element: <BookProfile/>,
+},
 
+
+{
+  path: "/book-service",
+  element: <BookService/>,
+},
+
+{
+  path: "/book-form",
+  element: <BookingForm/>,
+},
+
+{
+  path: "/outward-progress",
+  element: <OutwardProgress/>,
+},
+
+{
+  path: "/outward-details",
+  element: <OutwardDetails/>,
+},
+
+{
+  path: "/inward-details",
+  element: <InwardDetails/>,
+},
+
+// ====community
+{
+  path: "/community",
+  element: <Community/>,
+},
 ]);
+
 
 
 export default function App() {
