@@ -1,5 +1,5 @@
-import React from 'react'
-import { ChevronRight, Lock, UserCircle, ShieldCheck, Users, ArrowRight } from 'lucide-react';
+
+import {  Lock, UserCircle, ShieldCheck,  ArrowRight } from 'lucide-react';
 
 const General = () => {
 
@@ -7,17 +7,17 @@ const General = () => {
         {
           icon: <Lock className="w-5 h-5" />,
           label: 'Security',
-          link: '/settings/skills'
+          link: '/settings/security'
         },
         {
           icon: <UserCircle className="w-5 h-5" />,
           label: 'Payment Settings',
-          link: '/settings/profile'
+          link: '/settings/payment'
         },
         {
           icon: <ShieldCheck className="w-5 h-5" />,
           label: 'Notification Settings',
-          link: '/settings/kyc'
+          link: '/settings/notify'
         },
 
         {
@@ -30,7 +30,7 @@ const General = () => {
           {
             icon: <ShieldCheck className="w-5 h-5" />,
             label: 'Linked Devices',
-            link: '/settings/kyc'
+            link: '/settings/devices'
           },
         
       ];

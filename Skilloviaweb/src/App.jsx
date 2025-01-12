@@ -21,6 +21,12 @@ import Profile from "./pages/User-Dashboard/Settings/Myskillovia/Profile/Profile
 import KYCPage from "./pages/User-Dashboard/Settings/Myskillovia/Kyc/Kyc";
 import Identification from "./pages/User-Dashboard/Settings/Myskillovia/Kyc/Identification";
 import UtilityBill from "./pages/User-Dashboard/Settings/Myskillovia/Kyc/UtilityBill";
+import Payment from "./pages/User-Dashboard/Settings/General/PaymentSettings/Payment";
+import LinkedDevices from "./pages/User-Dashboard/Settings/General/LinkedDevice";
+import NotificationSettings from "./pages/User-Dashboard/Settings/General/NotificationSettings";
+import Security from "./pages/User-Dashboard/Settings/General/Security/Security";
+import Bookings from "./pages/User-Dashboard/Bookings/Booking";
+import ExploreSection from "./pages/User-Dashboard/Explore/Explore";
 
 
 
@@ -104,7 +110,14 @@ const router = createBrowserRouter([
   element: <User/>,
 },
 
+// ====explore====
 
+{
+  path: "/explore",
+  element: <ExploreSection/>,
+},
+
+//  ===== settings======= //
 {
   path: "/settings",
   element: <Settings/>,
@@ -130,10 +143,37 @@ const router = createBrowserRouter([
   element: <UtilityBill/>,
 },
 
+{
+  path: "/settings/payment",
+  element: <Payment/>,
+},
+
+{
+  path: "/settings/devices",
+  element: <LinkedDevices/>,
+},
+
+{
+  path: "/settings/notify",
+  element: <NotificationSettings/>,
+},
+
+{
+  path: "/settings/security",
+  element: <Security/>,
+},
 
 {
   path: "/messages",
   element: <Message/>,
+},
+
+
+// bookings ===
+
+{
+  path: "/bookings",
+  element: <Bookings/>,
 },
 
 
