@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <div className="bg-off min-h-48 px-[4rem] pt-8">
+    <div className="bg-off min-h-48 lg:px-[4rem] px-3 pt-8 mb-4">
  
 
  
@@ -12,7 +12,7 @@ const Footer = () => {
             <div className="mb-6 md:mb-0">
               <div className="flex items-center gap-2">
               <img src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1735327781/WHT_Horiz._Logo_bbkq77.png"
-              className=' w-[200px] h-[50px]  object-contain' alt="" />
+              className=' w-[150px] lg:w-[200px] h-[50px]  object-contain' alt="" />
               </div>
               <p className="text-[12px] text-gray-600">© 2024 Present. All rights reserved.</p>
             </div>

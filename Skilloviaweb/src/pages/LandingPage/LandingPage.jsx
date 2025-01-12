@@ -6,9 +6,13 @@ import WhatisSkillovia from './WhatisSkillovia'
 import HowSkilloviaWorks from './HowItWorks'
 import WhyLoveSkillovia from './Whyus'
 import HomeLayout from '../../utils/HomeLayout'
+import Loader from '../../componets/Loader'
 
 const LandingPage = () => {
   return (
+
+    <>
+<Loader />
     <HomeLayout>
 
  
@@ -23,6 +27,7 @@ const LandingPage = () => {
 
    
     </HomeLayout>
+    </>
   )
 }
 

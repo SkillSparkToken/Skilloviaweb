@@ -1,59 +1,67 @@
 import React from 'react';
-import { ArrowLeft, Monitor, Smartphone } from 'lucide-react';
+import { ArrowLeft, Smartphone, Monitor } from 'lucide-react';
+import UserLayout from '../../UserLayout/UserLayout';
+import BackButton from '../../../../componets/Back';
 
 const LinkedDevices = () => {
+  const devices = [
+    {
+      id: 1,
+      name: 'This device (SM-938374)',
+      type: 'Android',
+      location: 'Lagos, Nigeria',
+      status: 'Active now',
+      icon: Smartphone
+    },
+    {
+      id: 2,
+      name: 'Chrome 105',
+      type: 'Mac',
+      location: 'Lagos, Nigeria',
+      status: '5h ago',
+      icon: Monitor
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-[#f9fdf3] p-6">
-      {/* Header */}
-      <div className="flex items-center space-x-4 mb-6">
-        <button className="p-2 rounded-full hover:bg-gray-100">
-          <ArrowLeft className="w-6 h-6 text-gray-800" />
-        </button>
-        <h1 className="text-xl font-semibold text-gray-800">Linked Devices</h1>
+    <UserLayout>
+
+  
+
+    <div className="max-w-4xl mx-auto px-4 ">
+      <div className="flex items-center mb-6 gap-2">
+       <BackButton label='Linked Devices'/>
+     
       </div>
 
-      {/* Devices */}
-      <div className="bg-white shadow-md rounded-lg p-4 space-y-4">
-        {/* This Device */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Smartphone className="w-6 h-6 text-gray-500" />
-            <div>
-              <h2 className="font-medium text-gray-900">This device (SM-938374)</h2>
-              <p className="text-sm text-gray-500">Android</p>
-              <p className="text-sm text-gray-400">Lagos, Nigeria • Active now</p>
+      <div className="space-y-4">
+        {devices.map((device) => (
+          <div key={device.id} className="flex items-start gap-3">
+            <device.icon className="w-6 h-6 text-gray-600" />
+            <div className="flex-1">
+              <p className="font-medium">{device.name}</p>
+              <p className="text-sm text-gray-600">{device.type}</p>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <span>{device.location}</span>
+                <span>•</span>
+                <span>{device.status}</span>
+              </div>
             </div>
           </div>
-        </div>
+        ))}
 
-        {/* Other Device */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Monitor className="w-6 h-6 text-gray-500" />
-            <div>
-              <h2 className="font-medium text-gray-900">Chrome 105</h2>
-              <p className="text-sm text-gray-500">Mac</p>
-              <p className="text-sm text-gray-400">Lagos, Nigeria • 5h ago</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Sign-Out Link */}
-      <div className="mt-4">
-        <button className="text-red-500 hover:underline">
+        <button className="w-full text-red-500 text-sm py-2">
           Sign Out From All Other Devices
         </button>
-      </div>
 
-      {/* Save Button */}
-      <div className="mt-6">
-        <button className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition">
+        <button className="w-full bg-[#8fff7b] text-black rounded-lg py-3 font-medium hover:bg-[#7aee66] transition-colors">
           Save
         </button>
       </div>
     </div>
+    </UserLayout>
   );
+
 };
 
 export default LinkedDevices;

@@ -1,10 +1,12 @@
 import React from 'react'
 import UserHeader from './UserHeader'
 import Sidebar from './UserSidebar'
+import Loader from '../../../componets/Loader'
 
 const UserLayout = ({children}) => {
   return (
     <div className="min-h-screen flex flex-col bg-[#F6FCEB]">
+      <Loader />
       <UserHeader />
       <div className="flex flex-1 relative">
         {/* Sidebar wrapper -  */}

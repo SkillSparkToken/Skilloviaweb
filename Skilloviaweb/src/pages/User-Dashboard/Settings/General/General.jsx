@@ -20,11 +20,11 @@ const General = () => {
           link: '/settings/notify'
         },
 
-        {
-            icon: <ShieldCheck className="w-5 h-5" />,
-            label: 'Apperance',
-            link: '/settings/kyc'
-          },
+        // {
+        //     icon: <ShieldCheck className="w-5 h-5" />,
+        //     label: 'Apperance',
+        //     link: '/settingsc'
+        //   },
 
 
           {

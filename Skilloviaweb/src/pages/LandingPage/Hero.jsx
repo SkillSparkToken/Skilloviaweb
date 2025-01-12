@@ -10,7 +10,7 @@ const Hero = () => {
       <figure className="relative w-full h-full ">
         {/* Image */}
         <img 
-          src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1735327484/3c499517bc106130c733eb5c4c6549ec_wcp5mq.jpg" 
+          src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1736692788/rsz_3c499517bc106130c733eb5c4c6549ec_wcp5mq_uiuang.jpg" 
           alt="Hero background" 
           className="w-full h-full object-cover"
           />
@@ -31,8 +31,8 @@ const Hero = () => {
 
     <section className="min-h-[60vh] bg-[#bfcab4] flex flex-col items-center justify-center text-center px-4">
       {/* Main content */}
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl md:text-6xl  font-medium text-darkSec mb-6">
+      <div className="lg:max-w-4xl mx-auto">
+        <h1 className="text-3xl md:text-6xl  font-medium text-darkSec mb-6">
           Empower your community
           <br />
           by sharing
