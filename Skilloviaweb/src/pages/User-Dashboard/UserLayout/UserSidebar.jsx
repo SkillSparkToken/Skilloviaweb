@@ -38,7 +38,7 @@ const Sidebar = () => {
       </ul>
 
       {/* Mobile Navbar */}
-      <ul className="flex md:hidden fixed bottom-0 left-0 right-0 bg-green-50 border-t border-gray-200 justify-around p-2">
+      <ul className="flex md:hidden fixed bottom-0 left-0  z-50 right-0 bg-input border-t-2 border-t-secondary border-gray-200 justify-around p-2">
         {links
           .filter((link) => !link.logout)
           .map((link, index) => (
@@ -49,7 +49,7 @@ const Sidebar = () => {
                   `flex flex-col items-center space-y-1 ${
                     isActive
                       ? "text-secondary font-bold"
-                      : "text-gray-700 hover:text-green-700"
+                      : "text-slate-600 hover:text-green-700"
                   }`
                 }
               >

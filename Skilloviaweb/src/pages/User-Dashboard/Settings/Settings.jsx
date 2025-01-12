@@ -43,7 +43,7 @@ const Settings = ({children}) => {
   return (
    <UserLayout>
 
-<div className=" w-full lg:max-w-4xl mx-auto p-6">
+<div className=" w-full lg:max-w-4xl mx-auto px-4">
       <h1 className="text-2xl font-semibold mb-6">Settings</h1>
       
       {/* Tabs with improved visibility */}

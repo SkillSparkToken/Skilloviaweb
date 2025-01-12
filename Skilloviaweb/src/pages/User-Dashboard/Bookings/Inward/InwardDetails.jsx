@@ -1,40 +1,23 @@
 import React from 'react';
+import UserLayout from '../../UserLayout/UserLayout';
+import BackButton from '../../../../componets/Back';
+import BookCard from '../BookCard';
 
-const BookingDetails = () => {
+const InwardDetails = () => {
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <UserLayout>
+
+ 
+    <div className="max-w-4xl mx-auto px-4">
       <div className="flex items-center gap-2 mb-6">
-        <button className="p-2 hover:bg-gray-100 rounded-full">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <h1 className="text-xl font-semibold">Booking Details</h1>
+       <BackButton  label='Booking Progress'/>
       </div>
 
-      <div className="bg-gray-100 p-4 rounded-lg mb-6">
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
-            <img src="/api/placeholder/48/48" alt="Booking Icon" className="w-8 h-8" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm text-gray-600">This is a booking description for this particular card. You can click on this card to view this in extension.</p>
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-sm text-gray-500">23 Sept, 2022 - 12:39 AM</span>
-              <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                Active
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-sm font-medium mb-4">Contact your technician</h2>
+      <div className='mb-4'>
+          <h2 className="text-sm font-medium my-4">Client</h2>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src="/api/placeholder/40/40" alt="Technician" className="w-10 h-10 rounded-full" />
+              <img src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1733889808/4dc9bd46c368749f14855e5ffd902e12_wrgm6w.jpg" alt="Technician" className="w-10 h-10 rounded-full object-cover" />
               <span className="font-medium">Abdulmalik Qasim</span>
             </div>
             <button className="text-green-600">
@@ -44,12 +27,19 @@ const BookingDetails = () => {
             </button>
           </div>
         </div>
+<BookCard />
 
-        <div>
+      <div className="space-y-6">
+  
+
+        <div className='my-4'>
+          <span className="flex justify-between">
+
           <h2 className="text-sm font-medium mb-2">Location</h2>
           <p className="text-sm text-gray-600 mb-2">3329 Joyce St</p>
+          </span>
           <div className="bg-gray-100 h-48 rounded-lg mb-4">
-            <img src="/api/placeholder/600/200" alt="Map" className="w-full h-full object-cover rounded-lg" />
+            <img src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1734132538/2d23fb5a6f037ce8ec173ec3ebe08557_igbxvq.png" alt="Map" className="w-full h-full object-cover rounded-lg" />
           </div>
         </div>
 
@@ -81,8 +71,18 @@ const BookingDetails = () => {
           <span className="text-sm text-gray-600">£10,000</span>
         </div>
       </div>
+      <div className="flex gap-4 my-6">
+        <button className="flex-1 bg-green-400  text-white py-3 rounded-full text-[15px] font-medium hover:bg-green-500 transition-colors">
+          Confirm completion
+        </button>
+        <button className="flex-1 bg-red-100 text-red-600 py-3  rounded-full text-[15px] font-medium hover:bg-red-200 transition-colors">
+          Open dispute
+        </button>
+      </div>
     </div>
+    
+    </UserLayout>
   );
 };
 
-export default BookingDetails;
+export default InwardDetails;
