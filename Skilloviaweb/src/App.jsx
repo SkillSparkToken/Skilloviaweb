@@ -34,6 +34,9 @@ import OutwardDetails from "./pages/User-Dashboard/Bookings/Outward/OutwardDetai
 import OutwardProgress from "./pages/User-Dashboard/Bookings/Outward/OutwardProgress";
 import InwardDetails from "./pages/User-Dashboard/Bookings/Inward/InwardDetails";
 import Community from "./pages/User-Dashboard/Community/Community";
+import MySkillsPage from "./pages/User-Dashboard/Settings/Myskillovia/MySkills/Myskill";
+import SkillDetails from "./pages/User-Dashboard/Settings/Myskillovia/MySkills/SkillDetails";
+import AddSkill from "./pages/User-Dashboard/Settings/Myskillovia/MySkills/AddSkill/AddSkill";
 
 
 
@@ -133,6 +136,22 @@ const router = createBrowserRouter([
 {
   path: "/settings/profile",
   element: <Profile/>,
+},
+
+
+{
+  path: "/settings/skills",
+  element: <MySkillsPage/>,
+},
+
+{
+  path: "/settings/skill/add",
+  element: <AddSkill/>,
+},
+
+{
+  path: "/settings/skills-details",
+  element: <SkillDetails/>,
 },
 
 {
