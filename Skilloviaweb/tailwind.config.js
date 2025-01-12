@@ -15,6 +15,7 @@ export default {
         gray:"#D0D5DD",
         off:"#F6FCEB",
         darkSec:"#0F150C",
+        input:"#F0F6E6",
       },
     },
   },
