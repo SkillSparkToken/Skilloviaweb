@@ -37,6 +37,8 @@ import Community from "./pages/User-Dashboard/Community/Community";
 import MySkillsPage from "./pages/User-Dashboard/Settings/Myskillovia/MySkills/Myskill";
 import SkillDetails from "./pages/User-Dashboard/Settings/Myskillovia/MySkills/SkillDetails";
 import AddSkill from "./pages/User-Dashboard/Settings/Myskillovia/MySkills/AddSkill/AddSkill";
+import ChatMobile from "./pages/User-Dashboard/Chat/MessageMobile/ChatMobile";
+import ChatMobileDetails from "./pages/User-Dashboard/Chat/MessageMobile/ChatMobileDetails";
 
 
 
@@ -189,11 +191,23 @@ const router = createBrowserRouter([
   element: <Security/>,
 },
 
+// ====chat ===
+
 {
   path: "/messages",
   element: <Message/>,
 },
 
+
+{
+  path: "/messages",
+  element: <ChatMobile/>,
+},
+
+{
+  path: "/chat-details",
+  element: <ChatMobileDetails/>,
+},
 
 // bookings ===
 
