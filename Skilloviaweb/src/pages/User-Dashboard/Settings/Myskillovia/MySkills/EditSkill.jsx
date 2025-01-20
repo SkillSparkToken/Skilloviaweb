@@ -20,12 +20,12 @@ const EditSkillPage = () => {
     thumbnails: []
   });
 
-  // Track actual files separately from display thumbnails
   const [fileObjects, setFileObjects] = useState([null, null, null, null]);
 
   useEffect(() => {
     const fetchSkillDetails = async () => {
       try {
+        console.log('Fetching skill details...');
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/skills/user/all`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
@@ -37,11 +37,15 @@ const EditSkillPage = () => {
         }
 
         const data = await response.json();
+        console.log('Fetched skill data:', data);
+        
         const skill = data.data.find(skill => skill.id === parseInt(id));
         
         if (!skill) {
           throw new Error('Skill not found');
         }
+
+        console.log('Found specific skill:', skill);
 
         const thumbnailsArray = [
           skill.thumbnail01,
@@ -49,6 +53,8 @@ const EditSkillPage = () => {
           skill.thumbnail03,
           skill.thumbnail04
         ].filter(Boolean);
+
+        console.log('Processed thumbnails:', thumbnailsArray);
 
         setFormData({
           skill_type: skill.skill_type,
@@ -59,6 +65,7 @@ const EditSkillPage = () => {
         });
 
       } catch (err) {
+        console.error('Error fetching skill details:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -79,6 +86,13 @@ const EditSkillPage = () => {
   const handleImageUpload = (file, index) => {
     if (!file) return;
 
+    console.log('Handling image upload for index:', index);
+    console.log('File details:', {
+      name: file.name,
+      size: file.size,
+      type: file.type
+    });
+
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
       alert('File size must be less than 5MB');
@@ -88,6 +102,7 @@ const EditSkillPage = () => {
     try {
       const reader = new FileReader();
       reader.onload = (e) => {
+        console.log('File read successful');
         setFormData(prev => {
           const newThumbnails = [...prev.thumbnails];
           newThumbnails[index] = e.target.result;
@@ -97,20 +112,25 @@ const EditSkillPage = () => {
           };
         });
         
-        // Store the actual file object
         setFileObjects(prev => {
           const newFiles = [...prev];
           newFiles[index] = file;
           return newFiles;
         });
       };
+      reader.onerror = (error) => {
+        console.error('Error reading file:', error);
+        alert('Error processing image: ' + error.message);
+      };
       reader.readAsDataURL(file);
     } catch (err) {
+      console.error('Error processing image:', err);
       alert('Error processing image: ' + err.message);
     }
   };
 
   const handleDeleteImage = (index) => {
+    console.log('Deleting image at index:', index);
     setFormData(prev => {
       const newThumbnails = [...prev.thumbnails];
       newThumbnails[index] = null;
@@ -134,6 +154,7 @@ const EditSkillPage = () => {
 
     setDeleting(true);
     try {
+      console.log('Deleting skill with ID:', id);
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/skills/${id}`, {
         method: 'DELETE',
         headers: {
@@ -145,8 +166,10 @@ const EditSkillPage = () => {
         throw new Error('Failed to delete skill');
       }
 
+      console.log('Skill deleted successfully');
       navigate('/settings/skills');
     } catch (err) {
+      console.error('Error deleting skill:', err);
       alert('Error deleting skill: ' + err.message);
     } finally {
       setDeleting(false);
@@ -159,21 +182,26 @@ const EditSkillPage = () => {
   
     try {
       const formDataObj = new FormData();
+      
+      // Add basic form fields
       formDataObj.append('skill_type', formData.skill_type);
       formDataObj.append('experience_level', formData.experience_level);
       formDataObj.append('hourly_rate', formData.hourly_rate);
       formDataObj.append('description', formData.description);
   
-      // Handle thumbnails
+      // Handle thumbnails - use 'thumbnails' as the field name for files
       fileObjects.forEach((file, index) => {
         if (file) {
-          // If there's a new file, append it with the correct key
-          formDataObj.append(`thumbnail0${index + 1}`, file);
+          // Use just 'thumbnails' instead of 'thumbnail01', etc.
+          formDataObj.append('thumbnails', file);
         }
       });
   
-      // You don't need to send existing thumbnails - the backend will keep them
-      // if no new file is provided for that position
+      // Debug log
+      console.log('Sending FormData with entries:');
+      for (let pair of formDataObj.entries()) {
+        console.log(pair[0], ':', pair[1] instanceof File ? `File: ${pair[1].name}` : pair[1]);
+      }
   
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/skills/${id}`, {
         method: 'PUT',
@@ -184,18 +212,22 @@ const EditSkillPage = () => {
       });
   
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update skill');
+        const errorText = await response.text();
+        console.error('Server error response:', errorText);
+        throw new Error(`Server error: ${response.status} - ${response.statusText}`);
       }
   
+      const responseData = await response.json();
+      console.log('Update successful:', responseData);
       navigate(`/settings/skills/${id}`);
+  
     } catch (err) {
+      console.error('Error updating skill:', err);
       alert('Error updating skill: ' + err.message);
     } finally {
       setSubmitting(false);
     }
   };
-
   if (loading) {
     return (
       <UserLayout>
