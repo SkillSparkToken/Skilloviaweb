@@ -104,7 +104,7 @@ const PasswordReset = () => {
               <span>{message}</span>
             </div>
           )}
-        <h2 className="text-lg font-semibold mb-4">Reset Password</h2>
+        <h2 className="text-lg font-semibold my-4">Reset Password</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {[
