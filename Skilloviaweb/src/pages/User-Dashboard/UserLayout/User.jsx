@@ -230,13 +230,14 @@ spark_token_balance
 }/>
 
         <div>
-          <div className="font-semibold mb-2">Bio</div>
+
           {/* <p className="text-sm text-gray-600">
             {profileData.bio || "No bio available"}
 
           </p> */}
 
-          <Bio  />
+          <Bio initialBio={ profileData.bio || "No bio available"} location={profileData.location || "No location available"} street={profileData.street || "No street available"} zip_code={profileData.zip_code || "No zip code available"} />
+
         </div>
 
         <div>

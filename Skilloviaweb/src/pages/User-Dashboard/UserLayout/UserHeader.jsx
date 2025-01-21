@@ -135,11 +135,11 @@ const UserHeader = () => {
         <div className="flex items-center gap-4">
           {/* Location */}
           <div className="hidden sm:flex items-center gap-2 text-gray-700">
-            <MapPin className="h-5 w-5" />
+            <MapPin className="h-5 w-5 text-secondary" />
             <section className="block">
-              <span className="block text-[12px]">Location</span>
-              <span className="text-sm truncate max-w-[100px] sm:max-w-none">
-                3329 Joyce St
+              <p className="font-semibold capitalize leading-[12px] text-secondary text-[14px] block"> {profileData?.location || "Not set"}</p>
+              <span className="text-[12px] text-secondary truncate max-w-[100px] capitalize sm:max-w-none">
+              {profileData?.street || "Not set"} {profileData?.zip_code || "Not set"}
               </span>
             </section>
           </div>

@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { Pencil, Check, X, Loader } from 'lucide-react';
+import { Pencil, Check, X, Loader, LocateFixed, MapPin } from 'lucide-react';
 
-const EditableProfile = ({ initialBio }) => {
+const EditableProfile = ({ initialBio, location, street, zip_code }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     bio: initialBio || '',
-    location: '',
-    street: '',
-    zip_code: ''
+    location: location || '',
+    street: street || '',
+    zip_code: zip_code || ''
   });
 
   const handleUpdate = async () => {
@@ -55,7 +55,10 @@ const EditableProfile = ({ initialBio }) => {
     setError(null);
     setFormData(prev => ({
       ...prev,
-      bio: initialBio || ''
+      bio: initialBio || '',
+      location: location || '',
+      street: street || '',
+      zip_code: zip_code || ''
     }));
   };
 
@@ -63,7 +66,7 @@ const EditableProfile = ({ initialBio }) => {
     return (
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <div className="font-semibold">Edit Profile</div>
+          <div className="font-semibold">Edit My Bio</div>
           <div className="flex gap-2">
             <button
               onClick={handleUpdate}
@@ -96,7 +99,7 @@ const EditableProfile = ({ initialBio }) => {
           <textarea
             value={formData.bio}
             onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-            className="w-full p-2 text-sm text-gray-600 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+            className="w-full p-2 text-sm text-gray-600 border border-gray bg-input rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
             placeholder="Write your bio..."
             rows={3}
             disabled={isLoading}
@@ -106,7 +109,7 @@ const EditableProfile = ({ initialBio }) => {
             type="text"
             value={formData.location}
             onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-            className="w-full p-2 text-sm text-gray-600 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+            className="w-full p-2 text-sm text-gray-600 border border-gray bg-input rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
             placeholder="Location"
             disabled={isLoading}
           />
@@ -115,7 +118,7 @@ const EditableProfile = ({ initialBio }) => {
             type="text"
             value={formData.street}
             onChange={(e) => setFormData(prev => ({ ...prev, street: e.target.value }))}
-            className="w-full p-2 text-sm text-gray-600 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+            className="w-full p-2 text-sm text-gray-600 border border-gray bg-input rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
             placeholder="Street"
             disabled={isLoading}
           />
@@ -124,7 +127,7 @@ const EditableProfile = ({ initialBio }) => {
             type="text"
             value={formData.zip_code}
             onChange={(e) => setFormData(prev => ({ ...prev, zip_code: e.target.value }))}
-            className="w-full p-2 text-sm text-gray-600 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+            className="w-full p-2 text-sm text-gray-600 border border-gray bg-input rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
             placeholder="ZIP Code"
             disabled={isLoading}
           />
@@ -136,7 +139,7 @@ const EditableProfile = ({ initialBio }) => {
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
-        <div className="font-semibold">Bio & Location</div>
+      <h2 className='font-semibold'>My Bio</h2>
         <button
           onClick={() => setIsEditing(true)}
           className="text-gray-500 hover:text-gray-700"
@@ -144,14 +147,19 @@ const EditableProfile = ({ initialBio }) => {
           <Pencil className="w-4 h-4" />
         </button>
       </div>
-      <p className="text-sm text-gray-600">
-        {formData.bio || "No bio available"}
-      </p>
-      {formData.location && (
-        <p className="text-sm text-gray-500 mt-1">
-          {formData.location}
+      <div className="space-y-2">
+        <p className="text-sm text-gray-600">
+          {formData.bio || "No bio available"}
         </p>
-      )}
+        {formData.location && (
+          <p className="text-sm text-gray-500">
+            <span className="font-medium capitalize flex space-x-1 text-secondary"><MapPin size={20} />       <p className="text-sm text-gray-500">
+            {formData.location}, {formData.street}, {formData.zip_code}
+          </p></span> 
+          </p>
+        )}
+    
+      </div>
     </div>
   );
 };
