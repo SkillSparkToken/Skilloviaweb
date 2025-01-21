@@ -5,6 +5,7 @@ import UserLayout from './UserLayout';
 import SlidingPockets from './CashToken';
 import { Link } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
+import Bio from './Bio';
 
 const ProfileCard = () => {
   const [profileData, setProfileData] = useState(null);
@@ -206,11 +207,12 @@ const ProfileCard = () => {
 
         <div className="flex gap-8 text-sm">
           <div>
-            <div className="font-semibold">1.2k</div>
+            <div className="font-semibold">{profileData.
+total_followers}</div>
             <div className="text-gray-500">followers</div>
           </div>
           <div>
-            <div className="font-semibold">404</div>
+            <div className="font-semibold">{profileData.total_following}</div>
             <div className="text-gray-500">following</div>
           </div>
           <Link
@@ -222,13 +224,19 @@ const ProfileCard = () => {
     </Link>
         </div>
 
-        <SlidingPockets />
+        <SlidingPockets  cash_balance ={profileData.cash_balance} 
+spark_token_balance={profileData.
+spark_token_balance
+}/>
 
         <div>
           <div className="font-semibold mb-2">Bio</div>
-          <p className="text-sm text-gray-600">
+          {/* <p className="text-sm text-gray-600">
             {profileData.bio || "No bio available"}
-          </p>
+
+          </p> */}
+
+          <Bio  />
         </div>
 
         <div>

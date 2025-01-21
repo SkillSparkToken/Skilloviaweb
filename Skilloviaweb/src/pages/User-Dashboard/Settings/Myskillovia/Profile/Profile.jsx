@@ -272,7 +272,7 @@ const Profile = () => {
           <>
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center space-x-4">
-                <BackButton label='Set your rate' />
+                <BackButton label='Edit profile' />
               </div>
               <button 
                 onClick={handleSubmit}
