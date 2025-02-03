@@ -1,5 +1,5 @@
 import { ArrowLeft, Star } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import UserLayout from '../../UserLayout/UserLayout';
 import BackButton from '../../../../componets/Back';
 import { Link, useLocation } from 'react-router-dom';
@@ -8,13 +8,16 @@ const BookService = () => {
   const location = useLocation();
   const { user, skill } = location.state || {};
 
-  // Extract thumbnail URLs from skill data
-  const thumbnails = skill ? [
-    skill.thumbnail01,
-    skill.thumbnail02,
-    skill.thumbnail03,
-    skill.thumbnail04
-  ].filter(Boolean) : [];  // Filter out any null/undefined values
+  // Loading state when booking
+  const [loading, setLoading] = useState(false);
+
+  // Extract user_id from localStorage
+  const decodedToken = JSON.parse(localStorage.getItem("decodedToken"));
+  const booking_user_id = decodedToken?.id;
+
+  if (!booking_user_id) {
+    throw new Error("User ID not found in token");
+  }
 
   if (!user || !skill) {
     return (
@@ -26,17 +29,34 @@ const BookService = () => {
     );
   }
 
+  // Extract skill_id
+  const skill_id = skill.skill_id;
+
+  // Extract thumbnail URLs
+  const thumbnails = skill ? [
+    skill.thumbnail01,
+    skill.thumbnail02,
+    skill.thumbnail03,
+    skill.thumbnail04
+  ].filter(Boolean) : [];
+
+  // Handle booking click
+  const handleBookClick = () => {
+    setLoading(true);
+  };
+
   return (
     <UserLayout>
       <div className="max-w-4xl mx-auto px-4 rounded-lg">
         <div className="flex items-center gap-4 mb-6">
           <BackButton label={skill.skill_type} />
-          <Link 
-            to="/book-form" 
-            state={{ user, skill }}
-            className="ml-auto px-4 py-1 bg-book rounded-full hover:bg-yellow-200"
+          <Link
+            to="/book-form"
+            state={{ user, skill, skillId: skill_id, bookingUserId: booking_user_id }}
+            className={`ml-auto px-4 py-1 rounded-full ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-book hover:bg-yellow-200"}`}
+            onClick={handleBookClick}
           >
-            Book
+            {loading ? "Booking..." : "Book"}
           </Link>
         </div>
 
@@ -61,8 +81,6 @@ const BookService = () => {
           )}
         </div>
 
-   
-
         <div className="mb-8">
           <h2 className="font-semibold mb-2">Service Description</h2>
           <p className="text-gray-600">{skill.description}</p>
@@ -79,8 +97,6 @@ const BookService = () => {
             </div>
           </div>
         </div>
-
-   
       </div>
     </UserLayout>
   );
