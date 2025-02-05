@@ -9,6 +9,10 @@ const BookingForm = () => {
   const history = useNavigate();
   const { user, skill } = location.state || {};
 
+  const user_id = user.id;
+  console.log(user_id);
+  
+  
   const [formData, setFormData] = useState({
     description: '',
     location: '',
@@ -45,13 +49,6 @@ const BookingForm = () => {
       return;
     }
 
-
-    const decodedToken = JSON.parse(localStorage.getItem("decodedToken"));
-    const user_id = decodedToken?.id;
-
-    if (!user_id) {
-      throw new Error("User ID not found in token");
-    }
 
     const accessToken = localStorage.getItem("accessToken");
 
