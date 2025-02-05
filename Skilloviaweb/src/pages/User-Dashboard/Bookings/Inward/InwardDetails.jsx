@@ -4,6 +4,7 @@ import UserLayout from "../../UserLayout/UserLayout";
 import BackButton from "../../../../componets/Back";
 import BookCard from "../BookCard";
 import { Loader2, MessageCircleMore } from "lucide-react";
+import DynamicGoogleMap from "../../../../componets/Map/Map";
 
 const InwardDetails = () => {
   const { id } = useParams();
@@ -12,6 +13,7 @@ const InwardDetails = () => {
   const [clientProfile, setClientProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,8 +67,6 @@ const InwardDetails = () => {
         }
 
         const profileData = await profileResponse.json();
-        console.log(profileData);
-
         setClientProfile(profileData.data);
       } catch (err) {
         setError(err.message);
@@ -79,6 +79,42 @@ const InwardDetails = () => {
       fetchData();
     }
   }, [id, navigate]);
+
+  const handleBookingAction = async (action) => {
+    setIsProcessing(true);
+    const accessToken = localStorage.getItem("accessToken");
+    
+    try {
+      const response = await fetch(
+        `https://testapi.humanserve.net/api/bookings/${action}/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to ${action} booking`);
+      }
+
+      // Update local booking status
+      setBookingDetails(prev => ({
+        ...prev,
+        status: action === 'accept' ? 'accepted' : 'rejected'
+      }));
+
+      // Show success message or redirect
+      alert(`Booking ${action}ed successfully`);
+      navigate('/bookings'); // Or wherever you want to redirect
+    } catch (err) {
+      setError(`Error ${action}ing booking: ${err.message}`);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const handleChatClick = () => {
     if (clientProfile) {
@@ -129,7 +165,7 @@ const InwardDetails = () => {
             <div className="flex items-center gap-3">
               <img
                 src={
-                  clientProfile.photourl
+                  clientProfile?.photourl
                     ? `https://${clientProfile.photourl}`
                     : "https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg"
                 }
@@ -137,7 +173,7 @@ const InwardDetails = () => {
                 className="w-10 h-10 rounded-full object-cover"
               />
               <span className="font-medium">
-                {clientProfile.firstname} {clientProfile.lastname}
+                {clientProfile?.firstname} {clientProfile?.lastname}
               </span>
             </div>
             <button className="text-red-600 hidden">
@@ -149,14 +185,16 @@ const InwardDetails = () => {
           </div>
         </div>
 
-        <BookCard         key={bookingDetails.id}
-                id={bookingDetails.id}
-                title={bookingDetails.title}
-                description={bookingDetails.description}
-                date={bookingDetails.booking_date}
-                status={bookingDetails.status}
-                location={bookingDetails.booking_location}
-                fileUrl={bookingDetails.file_url} />
+        <BookCard
+          key={bookingDetails.id}
+          id={bookingDetails.id}
+          title={bookingDetails.title}
+          description={bookingDetails.description}
+          date={bookingDetails.booking_date}
+          status={bookingDetails.status}
+          location={bookingDetails.booking_location}
+          fileUrl={bookingDetails.file_url}
+        />
 
         <div className="space-y-6">
           <div className="my-4">
@@ -166,18 +204,8 @@ const InwardDetails = () => {
                 {bookingDetails?.booking_location || "N/A"}
               </p>
             </span>
-            {/* map */}
-            <div className="w-full h-[18rem] object-cover">
-  <iframe
-    title="Google Map"
-    className="w-full h-full rounded-xl"
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2381.692558173644!2d-0.1277584!3d51.5073509!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4876035cde2a38a1%3A0x94f34e15f0c4a41b!2sLondon%2C%20UK!5e0!3m2!1sen!2suk!4v1710713194569!5m2!1sen!2suk"
-    allowFullScreen=""
-    loading="lazy"
-    referrerPolicy="no-referrer-when-downgrade"
-  ></iframe>
-</div>
 
+            <DynamicGoogleMap location={bookingDetails?.booking_location} />
           </div>
 
           <div>
@@ -222,11 +250,19 @@ const InwardDetails = () => {
         </div>
 
         <div className="flex gap-4 my-6">
-          <button className="flex-1 bg-green-400 text-white py-3 rounded-full text-[15px] font-medium hover:bg-green-500 transition-colors">
-            Confirm completion
+          <button
+            onClick={() => handleBookingAction('accept')}
+            disabled={isProcessing}
+            className="flex-1 bg-green-400 text-white py-3 rounded-full text-[15px] font-medium hover:bg-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isProcessing ? 'Processing...' : 'Confirm completion'}
           </button>
-          <button className="flex-1 bg-red-100 text-red-600 py-3 rounded-full text-[15px] font-medium hover:bg-red-200 transition-colors">
-            Open dispute
+          <button
+            onClick={() => handleBookingAction('reject')}
+            disabled={isProcessing}
+            className="flex-1 bg-red-100 text-red-600 py-3 rounded-full text-[15px] font-medium hover:bg-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isProcessing ? 'Processing...' : 'Open dispute'}
           </button>
         </div>
       </div>

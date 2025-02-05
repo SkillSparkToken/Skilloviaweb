@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import UserLayout from '../../UserLayout/UserLayout';
 import BookCard from '../BookCard';
 import { Check, Loader2 } from 'lucide-react';
@@ -7,9 +7,11 @@ import BackButton from '../../../../componets/Back';
 
 const OutwardProgress = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [bookingDetails, setBookingDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,6 +56,42 @@ const OutwardProgress = () => {
       fetchData();
     }
   }, [id]);
+
+  const handleBookingAction = async (action) => {
+    setIsProcessing(true);
+    const accessToken = localStorage.getItem("accessToken");
+    
+    try {
+      const response = await fetch(
+        `https://testapi.humanserve.net/api/bookings/${action}/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to ${action} booking`);
+      }
+
+      // Update local booking status
+      setBookingDetails(prev => ({
+        ...prev,
+        status: action === 'accept' ? 'accepted' : 'rejected'
+      }));
+
+      // Show success message and redirect
+      alert(`Booking ${action}ed successfully`);
+      navigate('/bookings');
+    } catch (err) {
+      setError(`Error ${action}ing booking: ${err.message}`);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const getTimelineData = (status) => {
     const statusMap = {
@@ -117,14 +155,10 @@ const OutwardProgress = () => {
 
   return (
     <UserLayout>
-
-
       <div className="max-w-4xl mx-auto px-4">
-
-<span className="flex my-6">
-
-        <BackButton />
-</span>
+        <span className="flex my-6">
+          <BackButton />
+        </span>
 
         {bookingDetails && (
           <BookCard
@@ -181,11 +215,19 @@ const OutwardProgress = () => {
           </div>
         </div>
         <div className="flex gap-4">
-          <button className="flex-1 bg-green-400 text-white py-3 rounded-full text-[15px] font-medium hover:bg-green-500 transition-colors">
-            Confirm completion
+          <button
+            onClick={() => handleBookingAction('accept')}
+            disabled={isProcessing}
+            className="flex-1 bg-green-400 text-white py-3 rounded-full text-[15px] font-medium hover:bg-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isProcessing ? 'Processing...' : 'Confirm completion'}
           </button>
-          <button className="flex-1 bg-red-100 text-red-600 py-3 rounded-full text-[15px] font-medium hover:bg-red-200 transition-colors">
-            Open dispute
+          <button
+            onClick={() => handleBookingAction('reject')}
+            disabled={isProcessing}
+            className="flex-1 bg-red-100 text-red-600 py-3 rounded-full text-[15px] font-medium hover:bg-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isProcessing ? 'Processing...' : 'Open dispute'}
           </button>
         </div>
       </div>
