@@ -7,17 +7,12 @@ import { Link, useLocation } from 'react-router-dom';
 const BookService = () => {
   const location = useLocation();
   const { user, skill } = location.state || {};
+  
 
   // Loading state when booking
   const [loading, setLoading] = useState(false);
 
-  // Extract user_id from localStorage
-  const decodedToken = JSON.parse(localStorage.getItem("decodedToken"));
-  const booking_user_id = decodedToken?.id;
 
-  if (!booking_user_id) {
-    throw new Error("User ID not found in token");
-  }
 
   if (!user || !skill) {
     return (
@@ -52,7 +47,7 @@ const BookService = () => {
           <BackButton label={skill.skill_type} />
           <Link
             to="/book-form"
-            state={{ user, skill, skillId: skill_id, bookingUserId: booking_user_id }}
+            state={{ user, skill, skillId: skill_id}}
             className={`ml-auto px-4 py-1 rounded-full ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-book hover:bg-yellow-200"}`}
             onClick={handleBookClick}
           >
