@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import UserLayout from '../UserLayout/UserLayout';
-import { format, parse } from 'date-fns';
+import { format } from 'date-fns';
 import { Loader2, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
 
 const BookingCard = ({ id, title, description, date, status, location, fileUrl, type }) => {
+
+
   return (
     <div className="block bg-input border border-gray p-4 rounded-lg mb-4 hover:bg-gray-50 transition-colors">
       <div className="flex items-start gap-4">
@@ -33,6 +35,7 @@ const BookingCard = ({ id, title, description, date, status, location, fileUrl, 
             </div>
           </div>
           <p className="text-sm text-gray-600 mt-1 line-clamp-2">{description}</p>
+          <p className="text-sm text-gray-600 mt-1 line-clamp-2">{date}</p>
           <div className="flex items-center gap-4 mt-2">
             <span className={`px-2 py-1 text-xs rounded-lg ${
               status === 'accepted' 
@@ -49,7 +52,7 @@ const BookingCard = ({ id, title, description, date, status, location, fileUrl, 
 };
 
 const Bookings = () => {
-  const [activeTab, setActiveTab] = useState('outward');
+  const [activeTab, setActiveTab] = useState('inward');
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -95,7 +98,7 @@ const Bookings = () => {
       onClick={() => setActiveTab(id)}
       className={`pb-2 font-medium border-b-2 border-gray transition-colors ${
         activeTab === id
-          ? 'text-secondary border-secondary border-b-4'
+          ? 'text-secondary border-secondary border-b-4 '
           : 'text-gray-400 border-transparent hover:text-gray-600'
       }`}
     >
@@ -108,9 +111,9 @@ const Bookings = () => {
       <div className="max-w-4xl mx-auto px-4 py-6">
         <h2 className="text-2xl font-semibold mb-6">Bookings</h2>
 
-        <div className="flex gap-8 mb-6 border-b">
-          <TabButton id="outward" label="Outward Bookings" />
+        <div className="flex gap-8 mb-6 border-b border-b-secondary">
           <TabButton id="inward" label="Inward Bookings" />
+          <TabButton id="outward" label="Outward Bookings" />
         </div>
 
         <div>
