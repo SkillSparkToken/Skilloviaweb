@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import UserLayout from '../UserLayout/UserLayout';
-import { format } from 'date-fns';
 import { Loader2, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
 
 const BookingCard = ({ id, title, description, date, status, location, fileUrl, type }) => {
-
-
   return (
     <div className="block bg-input border border-gray p-4 rounded-lg mb-4 hover:bg-gray-50 transition-colors">
       <div className="flex items-start gap-4">
@@ -19,19 +16,19 @@ const BookingCard = ({ id, title, description, date, status, location, fileUrl, 
         </div>
         <div className="flex-1">
           <div className="flex justify-between items-start">
-            <h3 className="font-medium text-gray-900 text-[12px] ">{title}</h3>
+            <h3 className="font-medium text-gray-900 text-[12px] lg:text-[20px]">{title}</h3>
             <div className="flex gap-2">
-            <Link 
-  to={`/${type}-details/${id}`}
-  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-  title={`${type.charAt(0).toUpperCase() + type.slice(1)} Booking Details`}
->
-  {type === 'outward' ? (
-    <ArrowUpRight className="w-4 h-4 text-gray-600" />
-  ) : (
-    <ArrowDownLeft className="w-4 h-4 text-gray-600" />
-  )}
-</Link>
+              <Link 
+                to={type === 'outward' ? `/outward-progress/${id}` : `/inward-details/${id}`}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                title={`${type.charAt(0).toUpperCase() + type.slice(1)} Booking Details`}
+              >
+                {type === 'outward' ? (
+                  <ArrowUpRight className="w-4 h-4 text-gray-600" />
+                ) : (
+                  <ArrowDownLeft className="w-4 h-4 text-gray-600" />
+                )}
+              </Link>
             </div>
           </div>
           <p className="text-sm text-gray-600 mt-1 line-clamp-2">{description}</p>
@@ -80,7 +77,7 @@ const Bookings = () => {
         }
 
         const data = await response.json();
-        console.log(data);
+        console.log(data.data);
         
         setBookings(data.data);
       } catch (err) {

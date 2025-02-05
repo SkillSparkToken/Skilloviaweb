@@ -1,73 +1,235 @@
-import React from 'react';
-import UserLayout from '../../UserLayout/UserLayout';
-import BackButton from '../../../../componets/Back';
-import BookCard from '../BookCard';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import UserLayout from "../../UserLayout/UserLayout";
+import BackButton from "../../../../componets/Back";
+import BookCard from "../BookCard";
+import { Loader2, MessageCircleMore } from "lucide-react";
 
 const OutwardDetails = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [bookingDetails, setBookingDetails] = useState(null);
+  const [technicianProfile, setTechnicianProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      const accessToken = localStorage.getItem("accessToken");
+
+      try {
+        // First fetch booking details
+        const bookingResponse = await fetch(
+          "https://testapi.humanserve.net/api/bookings/get/user/outward",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+
+   
+        
+        if (!bookingResponse.ok) {
+          throw new Error("Failed to fetch booking details");
+        }
+
+        const bookingData = await bookingResponse.json();
+        console.log(bookingData);
+        
+        const numericId = parseInt(id);
+        console.log(numericId);
+        
+        const booking = bookingData.data.find(
+          (booking) => booking.id === numericId
+        );
+
+        if (!booking) {
+          throw new Error("Booking not found");
+        }
+
+        setBookingDetails(booking);
+
+        // Then fetch technician profile using the booking's technician ID
+        const profileResponse = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/users/basic/profile/${booking.booking_user_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!profileResponse.ok) {
+          throw new Error("Failed to fetch technician profile");
+        }
+
+        const profileData = await profileResponse.json();
+        setTechnicianProfile(profileData.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchData();
+    }
+  }, [id, navigate]);
+
+  const handleChatClick = () => {
+    if (technicianProfile) {
+      navigate(`/chat/${id}`, {
+        state: {
+          userId: id,
+          userName: `${technicianProfile.firstname} ${technicianProfile.lastname}`,
+          userPhoto: technicianProfile.photourl
+            ? `https://${technicianProfile.photourl}`
+            : null,
+        },
+      });
+    }
+  };
+
+  const handleCopyId = () => {
+    navigator.clipboard.writeText(bookingDetails?.id || "");
+  };
+
+  if (loading) {
+    return (
+      <UserLayout>
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="animate-spin w-12 h-12 text-secondary" />
+        </div>
+      </UserLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <UserLayout>
+        <div className="text-red-500 text-center py-8">Error: {error}</div>
+      </UserLayout>
+    );
+  }
+
   return (
     <UserLayout>
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="flex items-center gap-2 mb-6">
+          <BackButton label="Booking Details" />
+        </div>
 
- 
-    <div className="max-w-4xl mx-auto px-4">
-      <div className="flex items-center gap-2 mb-6">
-       <BackButton  label='Booking details'/>
-      </div>
-
-<BookCard />
-
-      <div className="space-y-6">
-        <div>
+        <div className="mb-4">
           <h2 className="text-sm font-medium my-4">Contact your technician</h2>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1733889808/4dc9bd46c368749f14855e5ffd902e12_wrgm6w.jpg" alt="Technician" className="w-10 h-10 rounded-full object-cover" />
-              <span className="font-medium">Abdulmalik Qasim</span>
+              <img
+                src={
+                  technicianProfile?.photourl
+                    ? `https://${technicianProfile.photourl}`
+                    : "https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg"
+                }
+                alt="Technician"
+                className="w-10 h-10 rounded-full object-cover"
+              />
+              <span className="font-medium">
+                {technicianProfile?.firstname} {technicianProfile?.lastname}
+              </span>
             </div>
-            <button className="text-green-600">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
+            <button onClick={handleChatClick}>
+              <MessageCircleMore className="text-secondary cursor-pointer" />
             </button>
           </div>
         </div>
 
-        <div>
-          <h2 className="text-sm font-medium mb-2">Location</h2>
-          <p className="text-sm text-gray-600 mb-2">3329 Joyce St</p>
-          <div className="bg-gray-100 h-48 rounded-lg mb-4">
-            <img src="https://res.cloudinary.com/dmhvsyzch/image/upload/v1734132538/2d23fb5a6f037ce8ec173ec3ebe08557_igbxvq.png" alt="Map" className="w-full h-full object-cover rounded-lg" />
+        <BookCard
+          key={bookingDetails.id}
+          id={bookingDetails.id}
+          title={bookingDetails.title}
+          description={bookingDetails.description}
+          date={bookingDetails.booking_date}
+          status={bookingDetails.status}
+          location={bookingDetails.booking_location}
+          fileUrl={bookingDetails.file_url}
+        />
+
+        <div className="space-y-6">
+          <div className="my-4">
+            <span className="flex justify-between">
+              <h2 className="text-sm font-medium mb-2">Location</h2>
+              <p className="text-sm text-gray-600 mb-2">
+                {bookingDetails?.booking_location || "N/A"}
+              </p>
+            </span>
+            <div className="w-full h-[18rem] object-cover">
+              <iframe
+                title="Google Map"
+                className="w-full h-full rounded-xl"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2381.692558173644!2d-0.1277584!3d51.5073509!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4876035cde2a38a1%3A0x94f34e15f0c4a41b!2sLondon%2C%20UK!5e0!3m2!1sen!2suk!4v1710713194569!5m2!1sen!2suk"
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-sm font-medium mb-2">Title</h2>
+            <p className="text-sm text-gray-600">
+              {bookingDetails?.title || "N/A"}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-sm font-medium mb-2">Message</h2>
+            <p className="text-sm text-gray-600">
+              {bookingDetails?.description || "N/A"}
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Booking ID</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">
+                {bookingDetails?.id || "N/A"}
+              </span>
+              <button className="text-green-600 text-sm" onClick={handleCopyId}>
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Payment method</span>
+            <span className="text-sm text-gray-600">
+              {bookingDetails?.payment_method || "Exchange for service"}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Price</span>
+            <span className="text-sm text-gray-600">
+              £{bookingDetails?.price?.toLocaleString() || "10,000"}
+            </span>
           </div>
         </div>
 
-        <div>
-          <h2 className="text-sm font-medium mb-2">Title</h2>
-          <p className="text-sm text-gray-600">Dolores qui quio vel officiis accusantium eum dolores aut. Eum molestiae qui blanditiis est quia commodi maxime sed quia. Aut mollitia et. Maxime dolores qui voluptas distinctio in...</p>
-        </div>
-
-        <div>
-          <h2 className="text-sm font-medium mb-2">Message</h2>
-          <p className="text-sm text-gray-600">Dolores qui quio vel officiis accusantium eum dolores aut. Eum molestiae qui blanditiis est quia commodi maxime sed quia. Aut mollitia et. Maxime dolores qui voluptas distinctio in...</p>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Booking ID</span>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">485748564957479</span>
-            <button className="text-green-600 text-sm">Copy</button>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Payment method</span>
-          <span className="text-sm text-gray-600">Exchange for Dog walking</span>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Price</span>
-          <span className="text-sm text-gray-600">£10,000</span>
+        <div className="flex gap-4 my-6">
+          <button className="flex-1 bg-green-400 text-white py-3 rounded-full text-[15px] font-medium hover:bg-green-500 transition-colors">
+            Confirm completion
+          </button>
+          <button className="flex-1 bg-red-100 text-red-600 py-3 rounded-full text-[15px] font-medium hover:bg-red-200 transition-colors">
+            Open dispute
+          </button>
         </div>
       </div>
-    </div>
     </UserLayout>
   );
 };
