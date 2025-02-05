@@ -156,7 +156,6 @@ const InwardDetails = () => {
                 date={bookingDetails.booking_date}
                 status={bookingDetails.status}
                 location={bookingDetails.booking_location}
-                date={bookingDetails.booking_date}
                 fileUrl={bookingDetails.file_url} />
 
         <div className="space-y-6">

@@ -11,7 +11,7 @@ const BookCard = ({ id, title, description, date, status, location, fileUrl, typ
         </div>
         <div className="flex-1">
           <div className="flex justify-between items-start">
-            <h3 className="font-medium text-gray-900 text-[12px] ">{title}</h3>
+            <h3 className="font-medium text-gray-900 text-[12px] lg:text-[20px] ">{title}</h3>
             <div className="flex gap-2">
 
             </div>

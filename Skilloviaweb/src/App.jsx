@@ -57,7 +57,7 @@ import NearByDetails from "./pages/User-Dashboard/Explore/NearByDetails";
 import Following from "./pages/Followers/Following";
 import Followers from "./pages/Followers/Followers";
 import ForgotPassword from "./pages/auth/ForgotPsw";
-import BookingDetails from "./pages/User-Dashboard/Bookings/BookingDetails";
+// import BookingDetails from "./pages/User-Dashboard/Bookings/BookingDetails";
 
 const router = createBrowserRouter([
   {
@@ -228,16 +228,16 @@ const router = createBrowserRouter([
     element: <ProtectedRoute><BookingForm/></ProtectedRoute>,
   }, 
   
+  // {
+  //   path: "/bookings/:id",
+  //   element: <ProtectedRoute><BookingDetails/></ProtectedRoute>,
+  // },
   {
-    path: "/bookings/:id",
-    element: <ProtectedRoute><BookingDetails/></ProtectedRoute>,
-  },
-  {
-    path: "/outward-progress",
+    path: "/outward-progress/:id",
     element: <ProtectedRoute><OutwardProgress/></ProtectedRoute>,
   },
   {
-    path: "/outward-details",
+    path: "/outward-details/:id",
     element: <ProtectedRoute><OutwardDetails/></ProtectedRoute>,
   },
   {
