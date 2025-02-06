@@ -206,6 +206,7 @@ const InwardDetails = () => {
             </span>
 
             <DynamicGoogleMap location={bookingDetails?.booking_location} />
+            
           </div>
 
           <div>

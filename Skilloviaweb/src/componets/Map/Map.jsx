@@ -5,7 +5,9 @@ import React, { useState, useEffect } from "react";
 const DynamicGoogleMap = ({ location }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const API_KEY = "AIzaSyChFAjrSODzkkKl_TaCCslNXdHwIWR-_uw";
+//   const API_KEY = "AIzaSyChFAjrSODzkkKl_TaCCslNXdHwIWR-_uw";
+
+ const API_KEY = "AIzaSyChFAjrSODzkkKl_TaCCslNXdHwIWR-_uw";
 
   useEffect(() => {
     if (location) {
