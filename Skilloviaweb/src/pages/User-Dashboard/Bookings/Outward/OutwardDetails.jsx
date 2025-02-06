@@ -4,6 +4,7 @@ import UserLayout from "../../UserLayout/UserLayout";
 import BackButton from "../../../../componets/Back";
 import BookCard from "../BookCard";
 import { Loader2, MessageCircleMore } from "lucide-react";
+import DynamicGoogleMap from "../../../../componets/Map/Map";
 
 const OutwardDetails = () => {
   const { id } = useParams();
@@ -199,16 +200,7 @@ const OutwardDetails = () => {
                 {bookingDetails?.booking_location || "N/A"}
               </p>
             </span>
-            <div className="w-full h-[18rem] object-cover">
-              <iframe
-                title="Google Map"
-                className="w-full h-full rounded-xl"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2381.692558173644!2d-0.1277584!3d51.5073509!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4876035cde2a38a1%3A0x94f34e15f0c4a41b!2sLondon%2C%20UK!5e0!3m2!1sen!2suk!4v1710713194569!5m2!1sen!2suk"
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              ></iframe>
-            </div>
+            <DynamicGoogleMap location={bookingDetails?.booking_location} />
           </div>
 
           <div>
