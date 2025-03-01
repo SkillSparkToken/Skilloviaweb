@@ -67,19 +67,40 @@ const BookingForm = () => {
     }
     return true;
   };
-
   const handleProceedToPayment = async () => {
     if (!validateForm()) return;
     
     setLoading(true);
     
     try {
-      // Create payment intent
+      // Get user ID and access token from localStorage
+      const userId = localStorage.getItem('decodedToken') 
+        ? JSON.parse(localStorage.getItem('decodedToken')).id 
+        : null;
       const accessToken = localStorage.getItem("accessToken");
+      
       if (!accessToken) {
         throw new Error("Access token not found");
       }
       
+      // First fetch the Stripe account ID
+      const stripeAccountResponse = await fetch(`https://testapi.humanserve.net/api/users/stripe/get/account/${userId}`, {
+        method: "GET",
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+      });
+      
+      const stripeAccountResult = await stripeAccountResponse.json();
+      if (!stripeAccountResponse.ok) {
+        throw new Error(`Error fetching Stripe account: ${stripeAccountResult.message}`);
+      }
+      
+      const stripeAccountId = stripeAccountResult.data.stripe_account_id;
+      console.log("Stripe account ID:", stripeAccountId);
+      
+      
+      // Now create payment intent with the fetched Stripe account ID
       const response = await fetch("https://testapi.humanserve.net/api/users/stripe/payment/intent", {
         method: "POST",
         headers: {
@@ -90,7 +111,7 @@ const BookingForm = () => {
           amount: calculatePrice(),
           currency: "usd",
           customerEmail: "customer@example.com", 
-          stripeAccountId: "acct_1QwuZDP5bmTXYfVK" 
+          stripeAccountId: stripeAccountId 
         }),
       });
       
@@ -108,7 +129,6 @@ const BookingForm = () => {
       setLoading(false);
     }
   };
-
   const handleBookingSubmit = async (paymentIntentId) => {
     const accessToken = localStorage.getItem("accessToken");
 
@@ -189,7 +209,7 @@ const BookingForm = () => {
               disabled={loading}
               className="ml-auto px-6 font-semibold py-2 rounded-full bg-primary hover:bg-green-500 text-secondary disabled:bg-gray-300 disabled:text-gray-500"
             >
-              {loading ? "Loading..." : "Proceed to Payment"}
+              {loading ? "Loading..." : "Book Now"}
             </button>
           </div>
 
