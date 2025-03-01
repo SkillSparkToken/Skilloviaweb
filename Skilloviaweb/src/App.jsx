@@ -5,7 +5,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import LandingPage from "./pages/LandingPage/LandingPage";
-import ExamplePage from "./componets/Example";
+
 import ContactForm from "./pages/contact-us/Contact";
 import FAQSection from "./pages/faq/Faq";
 import Blog from "./pages/blog/Blog";
@@ -43,7 +43,7 @@ import PasswordReset from "./pages/User-Dashboard/Settings/General/Security/Pass
 import ExploreList from "./pages/User-Dashboard/Explore/ExploreList";
 import ProtectedRoute from "./Hooks/ProtectedRoutes";
 import Search from "./pages/Search/Search";
-import { UserProfileProvider } from "./context/UserProfileContex";
+
 import ExploreProfiles from "./pages/User-Dashboard/Explore/ExploreProfiles";
 import AddBillingScreen from "./pages/User-Dashboard/Settings/General/PaymentSettings/Billing/AddBilling";
 import AddWithdrawal from "./pages/User-Dashboard/Settings/General/PaymentSettings/Withdrawal/AddWithdrawal";
@@ -68,10 +68,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <LandingPage/>,
   },
-  {
-    path: "/ex",
-    element: <ExamplePage/>,
-  },
+  // {
+  //   path: "/ex",
+  //   element: <ExamplePage/>,
+  // },
 
   {
     path: "/success",
