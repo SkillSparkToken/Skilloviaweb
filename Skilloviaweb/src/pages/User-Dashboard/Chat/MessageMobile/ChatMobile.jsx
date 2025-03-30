@@ -17,7 +17,7 @@ const ChatMobile = () => {
           throw new Error('No access token found');
         }
 
-        const response = await fetch('https://testapi.humanserve.net/api/message/chat/history/users', {
+        const response = await fetch('https://skilloviaapi.vercel.app/api/message/chat/history/users', {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
@@ -44,7 +44,7 @@ const ChatMobile = () => {
             unreadmessagecount
              || 0,
             photoUrl: user.photourl 
-              ? `https://${user.photourl}`
+              ? `${user.photourl}`
               : 'https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg'
           }));
           setUsers(formattedUsers);

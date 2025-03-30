@@ -9,7 +9,7 @@ const BookingCard = ({ id, title, description, date, status, location, fileUrl, 
       <div className="flex items-start gap-4">
         <div className="rounded-lg flex items-center justify-center">
           <img
-            src={`https://${fileUrl}`}
+            src={`${fileUrl}`}
             alt="Booking"
             className="w-28 h-28 rounded-lg object-cover"
           />
@@ -61,8 +61,8 @@ const Bookings = () => {
       const accessToken = localStorage.getItem('accessToken');
 
       const apiUrl = activeTab === 'outward'
-        ? 'https://testapi.humanserve.net/api/bookings/get/user/outward'
-        : 'https://testapi.humanserve.net/api/bookings/get/user/inward';
+        ? 'https://skilloviaapi.vercel.app/api/bookings/get/user/outward'
+        : 'https://skilloviaapi.vercel.app/api/bookings/get/user/inward';
 
       try {
         const response = await fetch(apiUrl, {

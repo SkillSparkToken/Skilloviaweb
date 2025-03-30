@@ -32,7 +32,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('https://testapi.humanserve.net/api/auth/forgot/password', {
+      const response = await fetch('https://skilloviaapis.vercel.app/api/auth/forgot/password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

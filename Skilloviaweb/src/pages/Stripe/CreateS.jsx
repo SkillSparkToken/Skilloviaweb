@@ -27,7 +27,7 @@ const StripeOnboarding = () => {
         throw new Error('You must be logged in to set up payment processing.');
       }
       
-      const response = await fetch('https://testapi.humanserve.net/api/users/stripe/create/connected/account', {
+      const response = await fetch('https://skilloviaapi.vercel.app/api/users/stripe/create/connected/account', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -68,7 +68,7 @@ const StripeOnboarding = () => {
       }
       
       // The API expects the stripeAccountId in the request body
-      const response = await fetch('https://testapi.humanserve.net/api/users/stripe/connected/account/link', {
+      const response = await fetch('https://skilloviaapi.vercel.app/api/users/stripe/connected/account/link', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,

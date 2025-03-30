@@ -21,7 +21,7 @@ const OutwardProgress = () => {
 
       try {
         const bookingResponse = await fetch(
-          "https://testapi.humanserve.net/api/bookings/get/user/outward",
+          "https://skilloviaapi.vercel.app/api/bookings/get/user/outward",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -63,7 +63,7 @@ const OutwardProgress = () => {
     
     try {
       const response = await fetch(
-        `https://testapi.humanserve.net/api/bookings/${action}/${id}`,
+        `https://skilloviaapi.vercel.app/api/bookings/${action}/${id}`,
         {
           method: "PUT",
           headers: {

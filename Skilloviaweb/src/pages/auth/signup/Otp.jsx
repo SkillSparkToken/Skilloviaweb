@@ -63,7 +63,7 @@ const handleVerify = async (e) => {
   const code = otp.join('');
 
   try {
-    const response = await axios.post('https://testapi.humanserve.net/api/auth/verify/email', {
+    const response = await axios.post('https://skilloviaapi.vercel.app/api/auth/verify/email', {
       email,
       code
     });

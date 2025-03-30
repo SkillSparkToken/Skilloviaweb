@@ -99,7 +99,7 @@ const MessagingInterface = () => {
           throw new Error('No access token found');
         }
 
-        const response = await fetch('https://testapi.humanserve.net/api/message/chat/history/users', {
+        const response = await fetch('https://skilloviaapi.vercel.app/api/message/chat/history/users', {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
@@ -120,7 +120,7 @@ const MessagingInterface = () => {
             time: formatTime(user.lastmessagetime) || '1 mins',
             unreadCount: user.unreadmessagecount || 0,
             photoUrl: user.photourl 
-              ? `https://${user.photourl}`
+              ? `${user.photourl}`
               : 'https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg'
           }));
           setMessages(formattedUsers);
@@ -161,17 +161,34 @@ const MessagingInterface = () => {
       };
     }
   }, [selectedChat?.userId]);
-
   const formatTime = (timestamp) => {
     if (!timestamp) return null;
     const date = new Date(timestamp);
-    return date.toLocaleString('en-US', { 
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true 
-    }).toLowerCase();
+    
+    // Check if message is from today
+    const today = new Date();
+    const isToday = date.getDate() === today.getDate() && 
+                    date.getMonth() === today.getMonth() && 
+                    date.getFullYear() === today.getFullYear();
+    
+    if (isToday) {
+      // For today's messages, just show the time
+      return date.toLocaleString('en-US', { 
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true 
+      }).toLowerCase();
+    } else {
+      // For older messages, show date and time
+      return date.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+      }).toLowerCase();
+    }
   };
-
   const fetchChatHistory = async (userId) => {
     setChatLoading(true);
     try {

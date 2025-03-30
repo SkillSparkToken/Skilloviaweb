@@ -31,7 +31,7 @@ const UserSearch = () => {
       const normalizedSearchTerm = searchTerm.toLowerCase().trim();
       
       const response = await fetch(
-        `https://testapi.humanserve.net/api/users/searchuser/${normalizedSearchTerm}`,
+        `https://skilloviaapi.vercel.app/api/users/searchuser/${normalizedSearchTerm}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
@@ -124,7 +124,7 @@ const UserSearch = () => {
             >
               <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gray-200 mr-3 border border-gray-200">
                 <img
-                  src={user.photourl ? `https://${user.photourl}` : 'https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg'}
+                  src={user.photourl ? `${user.photourl}` : 'https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg'}
                   alt={user.firstname}
                   className="w-full h-full object-cover"
                 />

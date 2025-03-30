@@ -19,7 +19,7 @@ const Phone = () => {
     setSuccess('');
 
     try {
-      const response = await axios.post('https://testapi.humanserve.net/api/auth/resend/code', { email });
+      const response = await axios.post('https://skilloviaapi.vercel.app/api/auth/resend/code', { email });
       setSuccess(response.data.message || 'Verification code sent successfully!');
       
       // Add a short delay before navigation to show the success message
