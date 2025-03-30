@@ -25,7 +25,7 @@ const ExploreList = () => {
         }
 
         const response = await fetch(
-          `https://testapi.humanserve.net/api/skills/searchname/${categoryName}`,
+          `https://skilloviaapi.vercel.app/api/skills/searchname/${categoryName}`,
           {
             method: 'GET',
             headers: {
@@ -100,7 +100,7 @@ const ExploreList = () => {
                 <Link to={`/user-profile/${skill.user_id}`}>
                   <img
                     src={skill.photourl 
-                      ? `https://${skill.photourl}` 
+                      ? `${skill.photourl}` 
                       : 'https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg'}
                     alt={skill.skill_type}
                     className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"

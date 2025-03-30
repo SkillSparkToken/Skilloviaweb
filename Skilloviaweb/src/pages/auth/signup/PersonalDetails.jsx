@@ -37,7 +37,7 @@ const PersonalDetails = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://testapi.humanserve.net/api/auth/register', {
+      const response = await axios.post('https://skilloviaapi.vercel.app/api/auth/register', {
         phone: formData.phone,
         email: formData.email,
         firstname: formData.firstname,

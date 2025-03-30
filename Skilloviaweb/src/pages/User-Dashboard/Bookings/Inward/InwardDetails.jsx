@@ -24,7 +24,7 @@ const InwardDetails = () => {
       try {
         // First fetch booking details
         const bookingResponse = await fetch(
-          "https://testapi.humanserve.net/api/bookings/get/user/inward",
+          "https://skilloviaapi.vercel.app/api/bookings/get/user/inward",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -86,7 +86,7 @@ const InwardDetails = () => {
     
     try {
       const response = await fetch(
-        `https://testapi.humanserve.net/api/bookings/${action}/${id}`,
+        `https://skilloviaapi.vercel.app/api/bookings/${action}/${id}`,
         {
           method: "PUT",
           headers: {
@@ -166,7 +166,7 @@ const InwardDetails = () => {
               <img
                 src={
                   clientProfile?.photourl
-                    ? `https://${clientProfile.photourl}`
+                    ? `${clientProfile.photourl}`
                     : "https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg"
                 }
                 alt="Client"
