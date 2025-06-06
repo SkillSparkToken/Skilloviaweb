@@ -11,40 +11,16 @@ import {
 } from "@stripe/react-stripe-js";
 
 const stripePromise = loadStripe(
-  "pk_test_51QrcLQ09r1sd9IYht35RhBj1DoUQHGdeSUQx85N9gOzUW8vwBzurLss9Yq7SbeeioMr9HDi39f2gN3OV14oM7N9H00vEoA1iDS"
+  "pk_live_51QrcLHP5XyDgdWQWsIWt14K7DFiRRtyrpVASIKv4a6SvZk0iKG45moF6dkfIU0n3bZ3bxzWsYQeYugSDKgTXgiz500mExtwTTb"
 );
 
 // Payment form component
-const CheckoutForm = ({ clientSecret, onSuccess, onCancel }) => {
+const CheckoutForm = ({ clientSecret, onSuccess, onCancel, fundingAmount }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-
-  //   if (!stripe || !elements) return;
-
-  //   setLoading(true);
-  //   setError(null);
-
-  //   const result = await stripe.confirmPayment({
-  //     elements,
-  //     confirmParams: {
-  //       return_url: window.location.origin + "/payment-success",
-  //     },
-  //     redirect: "if_required",
-  //   });
-
-  //   if (result.error) {
-  //     setError(result.error.message);
-  //     setLoading(false);
-  //   } else {
-  //     // Payment succeeded
-  //     onSuccess();
-  //   }
-  // };
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -78,7 +54,7 @@ const CheckoutForm = ({ clientSecret, onSuccess, onCancel }) => {
               Authorization: `Bearer ${accessToken}`,
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ amount: parseFloat(fundingAmount) }), // make sure fundingAmount is accessible here
+            body: JSON.stringify({ amount: parseFloat(fundingAmount) }),
           }
         );
 
@@ -86,7 +62,7 @@ const CheckoutForm = ({ clientSecret, onSuccess, onCancel }) => {
           throw new Error("Failed to confirm funding");
         }
 
-        onSuccess(); // Proceed after successful confirm
+        onSuccess();
       } catch (confirmError) {
         setError(confirmError.message);
       } finally {
@@ -125,7 +101,7 @@ const SlidingPockets = ({ cash_balance, spark_token_balance }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [fundingAmount, setFundingAmount] = useState("");
   const [clientSecret, setClientSecret] = useState("");
-  const [paymentStep, setPaymentStep] = useState("amount");
+  const [paymentStep, setPaymentStep] = useState("stripe-check"); 
   const [balanceData, setBalanceData] = useState({
     cash: cash_balance || 0,
     tokens: spark_token_balance || 0,
@@ -173,6 +149,15 @@ const SlidingPockets = ({ cash_balance, spark_token_balance }) => {
     fetchBalance();
   }, []);
 
+  const handleLinkStripe = () => {
+    
+    window.location.href = "/create-stripe-account";
+  };
+
+  const handleProceedToFunding = () => {
+    setPaymentStep("amount");
+  };
+
   const handleInitiatePayment = async () => {
     try {
       setLoading(true);
@@ -200,7 +185,7 @@ const SlidingPockets = ({ cash_balance, spark_token_balance }) => {
 
       const data = await response.json();
 
-      // Save the client secret and move to payment step
+    
       setClientSecret(data.clientSecret);
       setPaymentStep("payment");
     } catch (error) {
@@ -216,14 +201,14 @@ const SlidingPockets = ({ cash_balance, spark_token_balance }) => {
 
     // Reset and close the modal
     setModalOpen(false);
-    setPaymentStep("amount");
+    setPaymentStep("stripe-check");
     setClientSecret("");
     setFundingAmount("");
   };
 
   const handleCloseModal = () => {
     setModalOpen(false);
-    setPaymentStep("amount");
+    setPaymentStep("stripe-check");
     setClientSecret("");
     setFundingAmount("");
   };
@@ -301,7 +286,41 @@ const SlidingPockets = ({ cash_balance, spark_token_balance }) => {
       {modalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-25 px-4 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            {paymentStep === "amount" ? (
+            {paymentStep === "stripe-check" ? (
+              <>
+                <h2 className="text-lg font-semibold mb-4">Fund Account</h2>
+                <div className="mb-6">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                      <IoMdWallet className="text-secondary text-xl" />
+                    </div>
+                  </div>
+                  <p className="text-center text-gray-600 mb-4">
+                    Make sure your Stripe account is linked successfully before you can fund your account.
+                  </p>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={handleLinkStripe}
+                    className="w-full px-4 py-3 border border-secondary text-secondary rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                  >
+                    Link Stripe Account
+                  </button>
+                  <button
+                    onClick={handleProceedToFunding}
+                    className="w-full px-4 py-3 bg-secondary text-white rounded-lg hover:bg-opacity-90 transition-colors font-medium"
+                  >
+                    Proceed to Fund Account
+                  </button>
+                  <button
+                    onClick={handleCloseModal}
+                    className="w-full px-4 py-3 bg-gray-200 text-gray-700 text-red-500 rounded-lg hover:bg-gray-300 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            ) : paymentStep === "amount" ? (
               <>
                 <h2 className="text-lg font-semibold mb-4">Fund Account</h2>
                 <div className="mb-4">
@@ -347,6 +366,7 @@ const SlidingPockets = ({ cash_balance, spark_token_balance }) => {
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
                     <CheckoutForm
                       clientSecret={clientSecret}
+                      fundingAmount={fundingAmount}
                       onSuccess={handlePaymentSuccess}
                       onCancel={handleCloseModal}
                     />

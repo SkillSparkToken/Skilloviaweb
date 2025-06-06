@@ -120,42 +120,6 @@ const states = [
     </div>
   );
 
-  // Get user data from token
-  // useEffect(() => {
-  //   try {
-  //     const decodedToken = JSON.parse(localStorage.getItem("decodedToken"));
-  //     const user_id = decodedToken?.id;
-
-  //     console.log("Decoded token:", decodedToken);
-
-  //     if (!user_id) {
-  //       throw new Error("User ID not found in token");
-  //     }
-
-  //     setUserId(user_id);
-
-  //     // Check if lat and lon are available in the token
-  //     if (decodedToken?.lat && decodedToken?.lon) {
-  //       const lat = parseFloat(decodedToken.lat);
-  //       const lon = parseFloat(decodedToken.lon);
-
-  //       if (!isNaN(lat) && !isNaN(lon)) {
-  //         setUserPosition({
-  //           latitude: lat,
-  //           longitude: lon
-  //         });
-
-  //         console.log("User position from token:", { latitude: lat, longitude: lon });
-  //       } else {
-  //         console.error("Invalid coordinates in token:", decodedToken.lat, decodedToken.lon);
-  //       }
-  //     } else {
-  //       console.log("No coordinates found in token, will use geolocation if available");
-  //     }
-  //   } catch (err) {
-  //     console.error("Error reading user data from token:", err);
-  //   }
-  // }, []);
   useEffect(() => {
     try {
       const accessToken = localStorage.getItem("accessToken");
