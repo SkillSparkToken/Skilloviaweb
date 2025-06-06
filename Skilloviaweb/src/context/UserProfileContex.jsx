@@ -1,5 +1,6 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { Loader2 } from "lucide-react";
+import { jwtDecode } from "jwt-decode"; // Ensure jwt-decode is imported
 
 // Create the context
 const UserProfileContext = createContext();
@@ -8,16 +9,16 @@ const UserProfileContext = createContext();
 export const useUserProfile = () => {
   const context = useContext(UserProfileContext);
   if (!context) {
-    throw new Error('useUserProfile must be used within a UserProfileProvider');
+    throw new Error("useUserProfile must be used within a UserProfileProvider");
   }
   return context;
 };
 
 // Helper function to ensure HTTPS URLs
 const ensureHttps = (url) => {
-  if (!url) return '';
-  if (url.startsWith('https://')) return url;
-  if (url.startsWith('http://')) return url.replace('http://', 'https://');
+  if (!url) return "";
+  if (url.startsWith("https://")) return url;
+  if (url.startsWith("http://")) return url.replace("http://", "https://");
   return `https://${url}`;
 };
 
@@ -28,40 +29,87 @@ export const UserProfileProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [uploading, setUploading] = useState(false);
 
+  // const updateProfile = async () => {
+  //   try {
+  //     const decodedToken = JSON.parse(localStorage.getItem("decodedToken"));
+  //     const user_id = decodedToken?.id;
+
+  //     if (!user_id) {
+  //       throw new Error("User ID not found in token");
+  //     }
+
+  //     const accessToken = localStorage.getItem("accessToken");
+
+  //     if (!accessToken) {
+  //       throw new Error("Access token not found");
+  //     }
+
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_BASE_URL}/users/profile/${user_id}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch profile");
+  //     }
+
+  //     const data = await response.json();
+  //     const updatedData = {
+  //       ...data.data,
+  //       photourl: ensureHttps(data.data.photourl),
+  //     };
+  //     setProfileData(updatedData);
+  //   } catch (err) {
+  //     console.error("Error fetching profile:", err);
+  //     setError(err.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const updateProfile = async () => {
     try {
-      const decodedToken = JSON.parse(localStorage.getItem('decodedToken'));
-      const user_id = decodedToken?.id;
-      
-      if (!user_id) {
-        throw new Error('User ID not found in token');
-      }
+      const accessToken = localStorage.getItem("accessToken");
 
-      const accessToken = localStorage.getItem('accessToken');
-      
       if (!accessToken) {
-        throw new Error('Access token not found');
+        throw new Error("❌ Access token not found");
       }
 
-      const response = await fetch(`https://testapi.humanserve.net/api/users/profile/${user_id}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
+      const decodedToken = jwtDecode(accessToken); // ✅ Decode directly
+      console.log("🔑 Decoded Token:", decodedToken); // Debugging log
+
+      const user_id = decodedToken?.id; // ✅ Define user_id correctly
+      if (!user_id) {
+        throw new Error("❌ User ID not found in token");
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/users/profile/${user_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
-      });
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch profile');
+        throw new Error("❌ Failed to fetch profile");
       }
 
       const data = await response.json();
       const updatedData = {
         ...data.data,
-        photourl: ensureHttps(data.data.photourl)
+        photourl: ensureHttps(data.data.photourl), // Ensure correct URL handling
       };
+
       setProfileData(updatedData);
-      
+      console.log("✅ Updated profile data:", updatedData);
     } catch (err) {
-      console.error('Error fetching profile:', err);
+      console.error("❌ Error fetching profile:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -71,39 +119,42 @@ export const UserProfileProvider = ({ children }) => {
   const handleImageUpload = async (file) => {
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      throw new Error('Please upload an image file');
+    if (!file.type.startsWith("image/")) {
+      throw new Error("Please upload an image file");
     }
 
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
-      throw new Error('File size should be less than 5MB');
+      throw new Error("File size should be less than 5MB");
     }
 
     setUploading(true);
-    
+
     try {
-      const accessToken = localStorage.getItem('accessToken');
-      if (!accessToken) throw new Error('Access token not found');
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) throw new Error("Access token not found");
 
       const formData = new FormData();
-      formData.append('photo', file);
+      formData.append("photo", file);
 
-      const response = await fetch('https://testapi.humanserve.net/api/users/profile/upload', {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: formData
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/users/profile/upload`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: formData,
+        }
+      );
 
-      if (!response.ok) throw new Error('Failed to upload image');
+      if (!response.ok) throw new Error("Failed to upload image");
 
       const data = await response.json();
-      
-      setProfileData(prev => ({
+
+      setProfileData((prev) => ({
         ...prev,
-        photourl: ensureHttps(data.photourl || data.data?.photourl)
+        photourl: ensureHttps(data.photourl || data.data?.photourl),
       }));
 
       return data;
@@ -118,9 +169,11 @@ export const UserProfileProvider = ({ children }) => {
 
   // Loading component
   if (loading) {
-    return <div className=" justify-center items-center hidden">
-      <Loader2 className="animate-spin w-12 h-12 text-secondary" />
-    </div>;
+    return (
+      <div className=" justify-center items-center hidden">
+        <Loader2 className="animate-spin w-12 h-12 text-secondary" />
+      </div>
+    );
   }
 
   // Error component
@@ -136,10 +189,12 @@ export const UserProfileProvider = ({ children }) => {
     updateProfile,
     handleImageUpload,
     // Convenience getters
-    fullName: profileData ? `${profileData.firstname} ${profileData.lastname}` : '',
-    photoUrl: profileData?.photourl || '/default-avatar.png',
-    email: profileData?.email || '',
-    bio: profileData?.bio || '',
+    fullName: profileData
+      ? `${profileData.firstname} ${profileData.lastname}`
+      : "",
+    photoUrl: profileData?.photourl || "/default-avatar.png",
+    email: profileData?.email || "",
+    bio: profileData?.bio || "",
     skills: profileData?.skills || [],
   };
 
