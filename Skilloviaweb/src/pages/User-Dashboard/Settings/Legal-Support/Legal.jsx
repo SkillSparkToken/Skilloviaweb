@@ -10,17 +10,17 @@ const Legal = () => {
         {
           icon: <Lock className="w-5 h-5" />,
           label: 'Terms of Service',
-          link: '/settings/skills'
+          link: '/terms'
         },
         {
           icon: <UserCircle className="w-5 h-5" />,
           label: 'Privacy Policy',
-          link: '/settings/profile'
+          link: '/policy'
         },
         {
           icon: <ShieldCheck className="w-5 h-5" />,
           label: 'Help Center',
-          link: '/settings/kyc'
+          // link: '/settings/kyc'
         },
         
       ];
