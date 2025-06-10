@@ -20,6 +20,15 @@ const MessagingInterface = () => {
   };
 
   // Get sender ID from stored decoded token
+  // const getSenderId = () => {
+  //   try {
+  //     const decodedToken = JSON.parse(localStorage.getItem("decodedToken"));
+  //     return decodedToken?.id;
+  //   } catch (error) {
+  //     console.error("Error getting sender ID:", error);
+  //     return null;
+  //   }
+  // };
   const getSenderId = () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
@@ -333,10 +342,6 @@ const MessagingInterface = () => {
               </div>
             ) : error ? (
               <div className="text-red-500 text-center p-4">{error}</div>
-            ) : messages.length === 0 ? (
-              <div className="text-gray-500 text-center p-4">
-                No conversations found.
-              </div>
             ) : (
               messages.map((chat) => (
                 <div

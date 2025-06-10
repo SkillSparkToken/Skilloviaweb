@@ -32,7 +32,7 @@ const ChatMobile = () => {
         }
 
         const data = await response.json();
-        // console.log(data);
+        console.log(data);
 
         if (data.status === "success" && Array.isArray(data.data)) {
           const formattedUsers = data.data.map((user) => ({
@@ -59,7 +59,6 @@ const ChatMobile = () => {
     };
 
     fetchUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   const formatTime = (timestamp) => {
@@ -93,15 +92,8 @@ const ChatMobile = () => {
           <div className="p-4 text-center text-red-500">Error: {error}</div>
         )}
 
-        {!loading && !error && users.length === 0 && (
-          <div className="p-4 text-center text-gray-500">
-            No conversations found.
-          </div>
-        )}
-
         {!loading &&
           !error &&
-          users.length > 0 &&
           users.map((user) => (
             <div
               key={user?.id}

@@ -1,4 +1,12 @@
-import { Upload, X, CreditCard, Coins, CheckCircle, Loader2, MapPin } from "lucide-react";
+import {
+  Upload,
+  X,
+  CreditCard,
+  Coins,
+  CheckCircle,
+  Loader2,
+  MapPin,
+} from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import UserLayout from "../../UserLayout/UserLayout";
@@ -13,9 +21,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyChFAjrSODzkkKl_TaCCslNXdHwIWR-_uw";
-const stripePromise = loadStripe(
-  "pk_live_51QrcLHP5XyDgdWQWsIWt14K7DFiRRtyrpVASIKv4a6SvZk0iKG45moF6dkfIU0n3bZ3bxzWsYQeYugSDKgTXgiz500mExtwTTb"
-);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const BookingForm = () => {
   const location = useLocation();
@@ -32,7 +38,6 @@ const BookingForm = () => {
   const [placesApiLoading, setPlacesApiLoading] = useState(false);
   const [geocodeError, setGeocodeError] = useState(null);
 
-  // thumbnails: array of up to 4 images
   const [formData, setFormData] = useState({
     description: "",
     location: "",
@@ -45,7 +50,7 @@ const BookingForm = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [imagePreview, setImagePreview] = useState([]); // array of preview URLs
+  const [imagePreview, setImagePreview] = useState([]);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showPaymentChoiceModal, setShowPaymentChoiceModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -57,7 +62,6 @@ const BookingForm = () => {
     currency: "GBP",
   });
   const [balanceLoading, setBalanceLoading] = useState(false);
-
   // Load Google Places API
   useEffect(() => {
     if (!window.google && !placesApiLoading) {
@@ -98,7 +102,9 @@ const BookingForm = () => {
   useEffect(() => {
     if (placesApiLoaded && bookingLocationInputRef.current) {
       if (autocompleteRef.current) {
-        window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
+        window.google.maps.event.clearInstanceListeners(
+          autocompleteRef.current
+        );
       }
       try {
         const autocomplete = new window.google.maps.places.Autocomplete(
@@ -174,7 +180,6 @@ const BookingForm = () => {
     }));
   };
 
-  // Multi-image upload handler
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
     // Only allow maximum 4 images
@@ -185,8 +190,6 @@ const BookingForm = () => {
     }));
     setImagePreview(thumbnails.map((file) => URL.createObjectURL(file)));
   };
-
-  // Remove a thumbnail by index
   const handleRemoveThumbnail = (idx) => {
     const newThumbnails = formData.thumbnails.filter((_, i) => i !== idx);
     setFormData((prev) => ({
@@ -195,7 +198,6 @@ const BookingForm = () => {
     }));
     setImagePreview(newThumbnails.map((file) => URL.createObjectURL(file)));
   };
-
   const validateForm = () => {
     if (!formData.description || !formData.location || !formData.date) {
       alert("Please fill in all required fields.");
@@ -209,12 +211,30 @@ const BookingForm = () => {
     setShowPaymentChoiceModal(true);
   };
 
+  // const handlePaymentChoice = (method) => {
+  //   setPaymentMethod(method);
+  //   setShowPaymentChoiceModal(false);
+  //   if (method === "account") method = "wallet";
+  //   if (method === "account") {
+  //     handleProceedToPayment();
+  //   } else if (method === "sparktoken") {
+  //     handleSparkTokenPayment();
+  //   }
+  // };
+
   const handlePaymentChoice = (method) => {
-    setPaymentMethod(method);
+    const paymentMethodToUse = method === "account" ? "wallet" : method;
+
+    // Fix: convert "sparktoken" to "spark_token"
+    const normalizedPaymentMethod =
+      paymentMethodToUse === "sparktoken" ? "spark_token" : paymentMethodToUse;
+
+    setPaymentMethod(normalizedPaymentMethod);
     setShowPaymentChoiceModal(false);
-    if (method === "account") {
+
+    if (normalizedPaymentMethod === "wallet") {
       handleProceedToPayment();
-    } else if (method === "sparktoken") {
+    } else if (normalizedPaymentMethod === "spark_token") {
       handleSparkTokenPayment();
     }
   };
@@ -224,6 +244,7 @@ const BookingForm = () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) throw new Error("Access token not found");
+      const decodedToken = jwtDecode(accessToken);
       await fetch(
         `${import.meta.env.VITE_BASE_URL}/users/stripe/payment/intent`,
         {
@@ -291,6 +312,61 @@ const BookingForm = () => {
     }
   };
 
+  // const handleBookingSubmit = async (paymentIntentId) => {
+  //   const accessToken = localStorage.getItem("accessToken");
+  //   if (!accessToken) {
+  //     throw new Error("Access token not found");
+  //   }
+  //   setLoading(true);
+  //   const bookingData = new FormData();
+  //   bookingData.append("skills_id", skill.skill_id);
+  //   bookingData.append("booked_user_id", user_id);
+  //   bookingData.append("title", `Booking for ${skill.skill_type}`);
+  //   bookingData.append("description", formData.description);
+  //   bookingData.append("booking_location", formData.location);
+  //   bookingData.append("booking_lon", formData.lon);
+  //   bookingData.append("booking_lat", formData.lat);
+  //   bookingData.append("booking_date", formData.date);
+  //   bookingData.append("payment_intent_id", paymentIntentId);
+  //   bookingData.append("payment_method", paymentMethod);
+  //   bookingData.append("thumbnails", formData.image);
+
+  //   try {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_BASE_URL}/bookings`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //         body: bookingData,
+  //       }
+  //     );
+  //     const result = await response.json();
+  //     if (response.ok) {
+  //       setPaymentSuccess(true);
+  //       setShowPaymentModal(false);
+  //       setSuccess(true);
+  //       setShowSuccessModal(true);
+  //       setFormData({
+  //         description: "",
+  //         location: "",
+  //         date: "",
+  //         image: null,
+  //         lon: null,
+  //         lat: null,
+  //       });
+  //       setImagePreview(null);
+  //     } else {
+  //       alert(`Error: ${result.message}`);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting booking:", error);
+  //     alert("Something went wrong. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleBookingSubmit = async (paymentIntentId) => {
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
@@ -310,7 +386,8 @@ const BookingForm = () => {
     bookingData.append("payment_method", paymentMethod);
 
     formData.thumbnails.forEach((file) => {
-      bookingData.append("thumbnails[]", file);
+      // bookingData.append("thumbnails[]", file);
+      bookingData.append("thumbnails", file);
     });
     try {
       const response = await fetch(
@@ -348,7 +425,6 @@ const BookingForm = () => {
       setLoading(false);
     }
   };
-
   const handleSuccessConfirm = () => {
     setShowSuccessModal(false);
     navigate("/bookings");
@@ -391,7 +467,11 @@ const BookingForm = () => {
 
           {paymentSuccess && (
             <div className="mb-6 p-4 bg-green-100 text-green-800 rounded-lg flex items-center">
-              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
                 <path
                   fillRule="evenodd"
                   d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -452,7 +532,8 @@ const BookingForm = () => {
               )}
               {formData.lon && formData.lat && (
                 <div className="text-xs text-gray-400 mt-2">
-                  Coordinates: {formData.lon.toFixed(6)}, {formData.lat.toFixed(6)}
+                  Coordinates: {formData.lon.toFixed(6)},{" "}
+                  {formData.lat.toFixed(6)}
                 </div>
               )}
             </div>
@@ -473,7 +554,9 @@ const BookingForm = () => {
                 Upload Images (max 4)
               </label>
               <div
-                onClick={() => document.getElementById("thumbnailsUpload").click()}
+                onClick={() =>
+                  document.getElementById("thumbnailsUpload").click()
+                }
                 className="bg-input border border-gray rounded-lg p-8 text-center cursor-pointer"
               >
                 <Upload className="w-6 h-6 mx-auto mb-2 text-gray-400" />
@@ -493,7 +576,6 @@ const BookingForm = () => {
                   disabled={formData.thumbnails.length >= 4}
                 />
               </div>
-              {/* Thumbnails preview */}
               {imagePreview && imagePreview.length > 0 && (
                 <div className="mt-4 flex gap-4 flex-wrap">
                   {imagePreview.map((src, idx) => (
@@ -526,7 +608,6 @@ const BookingForm = () => {
         {showPaymentChoiceModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 px-4 flex items-center justify-center z-50">
             <div className="bg-input rounded-lg p-6 max-w-md w-full">
-
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-medium">Choose Payment Method</h3>
                 <button
@@ -551,9 +632,10 @@ const BookingForm = () => {
                   </div>
                   <div className="flex justify-between mt-1">
                     <span>SparkTokens:</span>
-                    <span className="font-bold">{balanceData.tokens} Tokens</span>
+                    <span className="font-bold">
+                      {balanceData.tokens} Tokens
+                    </span>
                   </div>
-
                 </div>
               )}
               <div className="space-y-4">
@@ -595,16 +677,19 @@ const BookingForm = () => {
               </div>
 
               <div className="fundacc">
-                    <Link to ="/user" className="bg-secondary py-2 px-3 rounded-md text-white flex justify-center my-4 w-full">Fund Account</Link>
+                <Link
+                  to="/user"
+                  className="bg-secondary py-2 px-3 rounded-md text-white flex justify-center my-4 w-full"
+                >
+                  Fund Account
+                </Link>
+              </div>
+              {parseFloat(balanceData.cash) < calculatePrice() &&
+                balanceData.tokens < skill.spark_token && (
+                  <div className="mt-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm text-center">
+                    Insufficient funds. Please top up your wallet or tokens.
                   </div>
-              {(parseFloat(balanceData.cash) < calculatePrice() &&
-                balanceData.tokens < skill.spark_token) && (
-                <div className="mt-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm text-center">
-                  Insufficient funds. Please top up your wallet or tokens.
-                </div>
-                
-              )}
-              
+                )}
             </div>
           </div>
         )}

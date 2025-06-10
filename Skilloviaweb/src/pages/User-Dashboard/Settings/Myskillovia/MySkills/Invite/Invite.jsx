@@ -102,9 +102,7 @@ const Invite = () => {
     }
   };
 
-  const referralLink = referralCode
-    ? referralCode
-    : "";
+  const referralLink = referralCode ? referralCode : "";
 
   const handleCopyLink = async () => {
     if (!referralLink) return;
@@ -245,7 +243,10 @@ const Invite = () => {
                   <span>Successful Referrals</span>
                 </div>
                 <span className="font-semibold">
-                  {referredUsers.filter((u) => u.status === "successful").length}
+                  {
+                    referredUsers.filter((u) => u.status === "successful")
+                      .length
+                  }
                 </span>
               </div>
               <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
@@ -285,16 +286,20 @@ const Invite = () => {
                         src={user.photourl}
                         alt={user.firstname}
                         className="w-12 h-12 rounded-full object-cover border"
-                        onError={e => { e.target.src = "/default-avatar.png"; }}
+                        onError={(e) => {
+                          e.target.src = "/default-avatar.png";
+                        }}
                       />
                       <div className="flex-1">
                         <div className="font-semibold">
                           {user.firstname} {user.lastname}
                         </div>
-                        <div className="text-sm text-gray-600">{user.email}</div>
-                        <div className="text-sm text-gray-600">{user.phone}</div>
-                  
-                   
+                        <div className="text-sm text-gray-600">
+                          {user.email}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {user.phone}
+                        </div>
                       </div>
                       {user.status === "successful" && (
                         <FaCheckCircle className="text-green-500" />

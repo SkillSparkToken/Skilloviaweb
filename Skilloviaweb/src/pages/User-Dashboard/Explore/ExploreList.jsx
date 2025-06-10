@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   ArrowLeft,
@@ -14,10 +15,12 @@ import { Link, useLocation } from "react-router-dom";
 import FollowButton from "../../../componets/FollowBtn";
 
 const ExploreList = () => {
-  const [skills, setSkills] = useState(null);
+  const [skills, setSkills] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
   const location = useLocation();
+  const categoryId = new URLSearchParams(location.search).get("id") || ""; // Use ?id=684660f0... in the URL
   const categoryName =
     new URLSearchParams(location.search).get("category") || "";
 
@@ -29,12 +32,12 @@ const ExploreList = () => {
       try {
         const accessToken = localStorage.getItem("accessToken");
 
-        if (!accessToken) {
-          throw new Error("Authentication required");
-        }
+        if (!accessToken) throw new Error("Authentication required");
 
         const response = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/skills/searchname/${categoryName}`,
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/skills/category/${categoryId}/users`,
           {
             method: "GET",
             headers: {
@@ -45,7 +48,7 @@ const ExploreList = () => {
         );
 
         const data = await response.json();
-        console.log(data, "here ...");
+        console.log(data);
 
         if (data.status === "success") {
           setSkills(data.data || []);
@@ -60,8 +63,10 @@ const ExploreList = () => {
       }
     };
 
-    fetchSkills();
-  }, [categoryName]);
+    if (categoryId) {
+      fetchSkills();
+    }
+  }, [categoryId]);
 
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center py-16 text-gray-500">
@@ -106,23 +111,25 @@ const ExploreList = () => {
 
           {skills?.map((skill) => (
             <div
-              key={skill.id}
+              key={skill._id}
               className="flex items-center justify-between border border-gray bg-input p-4 rounded-lg hover:shadow-md transition-shadow"
             >
               <div className="flex items-center gap-3">
-                <Link to={`/user-profile/${skill.user_id}`}>
+                <Link to={`/user-profile/${skill.userId?._id}`}>
                   <img
                     src={
-                      skill.photourl
-                        ? `${skill.photourl}`
+                      skill.userId?.photourl
+                        ? skill.userId.photourl
                         : "https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg"
                     }
-                    alt={skill.skill_type}
+                    alt={skill.userId?.firstname}
                     className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
                   />
                 </Link>
                 <div>
-                  <h3 className="font-medium">{skill.creator_name}</h3>
+                  <h3 className="font-medium">
+                    {skill.userId?.firstname} {skill.userId?.lastname}
+                  </h3>
                   <div className="flex items-center gap-2 text-sm ">
                     <p>Exp: {skill.experience_level}</p>
                   </div>
@@ -131,7 +138,7 @@ const ExploreList = () => {
                   </div>
                 </div>
               </div>
-              <FollowButton userId={skill.user_id} />
+              <FollowButton userId={skill.userId?._id} />
             </div>
           ))}
         </div>

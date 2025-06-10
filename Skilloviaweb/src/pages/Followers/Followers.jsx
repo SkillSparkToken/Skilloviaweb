@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import BackButton from '../../componets/Back';
-import UserLayout from '../User-Dashboard/UserLayout/UserLayout';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import BackButton from "../../componets/Back";
+import UserLayout from "../User-Dashboard/UserLayout/UserLayout";
+import { Link } from "react-router-dom";
 
 const Followers = () => {
   const [followers, setFollowers] = useState([]);
@@ -11,27 +11,27 @@ const Followers = () => {
   useEffect(() => {
     const fetchFollowers = async () => {
       try {
-        const accessToken = localStorage.getItem('accessToken');
-        if (!accessToken) throw new Error('Access token not found');
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) throw new Error("Access token not found");
 
         const response = await fetch(
           `${import.meta.env.VITE_BASE_URL}/follows/getfollowers`,
           {
             headers: {
-              'Authorization': `Bearer ${accessToken}`
-            }
+              Authorization: `Bearer ${accessToken}`,
+            },
           }
         );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch followers');
+          throw new Error("Failed to fetch followers");
         }
 
         const followersData = await response.json();
         console.log(followersData);
         setFollowers(followersData.data || []);
       } catch (err) {
-        console.error('Error fetching followers:', err);
+        console.error("Error fetching followers:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -61,10 +61,12 @@ const Followers = () => {
 
   return (
     <UserLayout>
-      <div className='px-4'>
+      <div className="px-4">
         <span className="flex mb-4">
-          <BackButton label='' />
-          <h2 className="text-xl text-slate-800 mt-2">Followers ({followers.length})</h2>
+          <BackButton label="" />
+          <h2 className="text-xl text-slate-800 mt-2">
+            Followers ({followers.length})
+          </h2>
         </span>
         <div className="space-y-4">
           {followers.length === 0 ? (
@@ -76,12 +78,13 @@ const Followers = () => {
               const user = followData.follower_id; // Extract the nested user object
               return (
                 <Link key={user._id} to={`/user-profile/${user._id}`}>
-                  <div 
-                    className="p-2 border border-gray bg-input mb-4 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                  >
+                  <div className="p-2 border border-gray bg-input mb-4 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                     <div className="flex items-center space-x-4">
-                      <img 
-                        src={user.photourl || 'https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg'}
+                      <img
+                        src={
+                          user.photourl ||
+                          "https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg"
+                        }
                         alt={`${user.firstname} ${user.lastname}`}
                         className="w-12 h-12 rounded-full object-cover"
                       />
@@ -89,7 +92,9 @@ const Followers = () => {
                         <h3 className="font-medium">
                           {user.firstname} {user.lastname}
                         </h3>
-                        <p className="text-gray-600 text-[12px]">{user.email}</p>
+                        <p className="text-gray-600 text-[12px]">
+                          {user.email}
+                        </p>
                       </div>
                     </div>
                   </div>
