@@ -1,23 +1,17 @@
 import React, { useEffect, useState, useRef } from "react";
 import { ArrowLeft, Loader2, Send } from "lucide-react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import UserLayout from "../../UserLayout/UserLayout";
-// import jwtDecode at the top if you use it for getSenderId
-import { jwtDecode } from "jwt-decode"; // Make sure to install this if you haven't: npm install jwt-decode
+
+import { jwtDecode } from "jwt-decode"; // Ensure jwt-decode is imported
 
 const ChatInterface = () => {
-  const params = useParams();
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  // Always get userId from either location.state or params
-  const userId = location.state?.userId || params.userId;
-  const userName = location.state?.userName;
-  const userPhoto = location.state?.userPhoto;
-
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { userId, userName, userPhoto } = location.state || {};
   const messagesEndRef = useRef(null);
   const pollingInterval = useRef(null);
 
@@ -25,12 +19,25 @@ const ChatInterface = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // const getSenderId = () => {
+  //   try {
+  //     const decodedToken = JSON.parse(localStorage.getItem('decodedToken'));
+  //     return decodedToken?.id;
+  //   } catch (error) {
+  //     console.error('Error getting sender ID:', error);
+  //     return null;
+  //   }
+  // };
+
   const getSenderId = () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
+
       if (!accessToken) {
         throw new Error("Access token not found");
       }
+
+      // Decode the access token to get the user ID (assuming it's a JWT)
       const decodedToken = jwtDecode(accessToken);
       return decodedToken?.id;
     } catch (error) {
@@ -60,6 +67,7 @@ const ChatInterface = () => {
             },
           }
         );
+
         if (!response.ok) {
           console.error("Failed to mark message as read:", msg.id);
         }
@@ -103,12 +111,6 @@ const ChatInterface = () => {
   };
 
   useEffect(() => {
-    if (!userId) {
-      // If no userId at all, redirect or show error
-      navigate("/messages", { replace: true });
-      return;
-    }
-
     const fetchChatHistory = async () => {
       setLoading(true);
       try {
@@ -151,16 +153,17 @@ const ChatInterface = () => {
       }
     };
 
-    fetchChatHistory();
-    pollingInterval.current = setInterval(fetchNewMessages, 3000);
+    if (userId) {
+      fetchChatHistory();
+      pollingInterval.current = setInterval(fetchNewMessages, 3000);
+    }
 
     return () => {
       if (pollingInterval.current) {
         clearInterval(pollingInterval.current);
       }
     };
-    // eslint-disable-next-line
-  }, [userId, navigate]); // Only re-run if userId or navigate changes
+  }, [userId, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -268,7 +271,9 @@ const ChatInterface = () => {
                     {msg.content}
                   </div>
                   <span className="text-xs text-gray-500 mt-1">
-                    {new Date(msg.created_at).toLocaleTimeString()}
+                    {new Date(
+                      Number(msg.createdAt?.$date?.$numberLong)
+                    ).toLocaleTimeString()}
                   </span>
                 </div>
               ))
@@ -342,8 +347,14 @@ const ChatInterface = () => {
                 >
                   {msg.content}
                 </div>
-                <span className="text-xs text-gray-500 mt-1">
+                {/*<span className="text-xs text-gray-500 mt-1">
                   {new Date(msg.created_at).toLocaleTimeString()}
+                </span>*/}
+
+                <span className="text-xs text-gray-500 mt-1">
+                  {new Date(
+                    Number(msg.createdAt?.$date?.$numberLong)
+                  ).toLocaleTimeString()}
                 </span>
               </div>
             ))

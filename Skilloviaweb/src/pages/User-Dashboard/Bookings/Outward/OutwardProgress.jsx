@@ -35,11 +35,13 @@ const OutwardProgress = () => {
         }
 
         const bookingData = await bookingResponse.json();
-        const numericId = parseInt(id);
+        // const numericId = parseInt(id);
+        // const booking = bookingData.data.find(
+        //   (booking) => booking.id === numericId
+        // );
         const booking = bookingData.data.find(
-          (booking) => booking.id === numericId
+          (booking) => booking.id === id // compare with string id directly
         );
-
         if (!booking) {
           throw new Error("Booking not found");
         }
@@ -80,13 +82,23 @@ const OutwardProgress = () => {
       // Update local booking status
       setBookingDetails((prev) => ({
         ...prev,
-        status: action === "accept" ? "accepted" : action === "in-progress" ? "in_progress" : "completed",
+        status:
+          action === "accept"
+            ? "accepted"
+            : action === "in-progress"
+            ? "in_progress"
+            : "completed",
       }));
 
       // Show success message and redirect
-      const actionVerb = action === "in-progress" ? "started" : action === "complete" ? "completed" : "accepted";
+      const actionVerb =
+        action === "in-progress"
+          ? "started"
+          : action === "complete"
+          ? "completed"
+          : "accepted";
       alert(`Booking ${actionVerb} successfully`);
-      
+
       if (action === "complete") {
         navigate("/bookings");
       }
@@ -105,8 +117,8 @@ const OutwardProgress = () => {
           bookingId: bookingDetails.id,
           bookedUserId: bookingDetails.booked_user_id,
           bookingTitle: bookingDetails.title,
-          description: bookingDetails.description
-        }
+          description: bookingDetails.description,
+        },
       });
     } else {
       alert("Cannot open dispute: Missing booking information");
@@ -128,35 +140,50 @@ const OutwardProgress = () => {
     return [
       {
         status: "Booking request sent",
-        timestamp: bookingDetails?.created_at || "-",
+        // timestamp: bookingDetails?.createdAt || "-",
+        timestamp: bookingDetails?.createdAt
+          ? new Date(bookingDetails.createdAt).toLocaleString()
+          : "-",
         hasCheck: currentStep >= 1, // Always checked as it's the first step
       },
       {
         status: "Booking request confirmed",
-        timestamp: bookingDetails?.updated_at || "-",
+        // timestamp: bookingDetails?.updated_at || "-",
+        timestamp: bookingDetails?.updatedAt
+          ? new Date(bookingDetails.updatedAt).toLocaleString()
+          : "-",
         hasCheck: currentStep >= 2, // Checked for accepted, in_progress, completed
       },
       {
         status: "Payment confirmed",
-        timestamp: bookingDetails?.updated_at || "-",
+        // timestamp: bookingDetails?.updated_at || "-",
+        timestamp: bookingDetails?.updatedAt
+          ? new Date(bookingDetails.updatedAt).toLocaleString()
+          : "-",
         hasCheck: currentStep >= 2, // Checked same time as confirmation
       },
       {
         status: "Service in progress",
-        timestamp: bookingDetails?.booking_date || "-",
+        // timestamp: bookingDetails?.booking_date || "-",
+        timestamp: bookingDetails?.booking_date
+          ? new Date(bookingDetails.booking_date).toLocaleString()
+          : "-",
         hasCheck: currentStep >= 3, // Checked for in_progress, completed
       },
       {
         status: "Service completed",
-        timestamp: bookingDetails?.updated_at || "-",
+        // timestamp: bookingDetails?.updated_at || "-",
+        timestamp: bookingDetails?.updatedAt
+          ? new Date(bookingDetails.updatedAt).toLocaleString()
+          : "-",
         hasCheck: currentStep >= 4, // Only checked when completed
       },
     ];
   };
-  
+
   const renderActionButton = () => {
     if (!bookingDetails) return null;
-    
+
     switch (bookingDetails.status) {
       case "pending":
         // Return a disabled button when status is pending
@@ -201,7 +228,7 @@ const OutwardProgress = () => {
         return null;
     }
   };
-  
+
   if (loading) {
     return (
       <UserLayout>
@@ -228,19 +255,24 @@ const OutwardProgress = () => {
         <span className="flex my-6">
           <BackButton />
         </span>
-
         {bookingDetails && (
-          <BookCard
-            key={bookingDetails.id}
-            id={bookingDetails.id}
-            title={bookingDetails.title}
-            description={bookingDetails.description}
-            date={bookingDetails.booking_date}
-            status={bookingDetails.status}
-            location={bookingDetails.booking_location}
-            fileUrl={bookingDetails.file_url}
-          />
-        )}
+  <BookCard
+    key={bookingDetails.id}
+    id={bookingDetails.id}
+    title={bookingDetails.title}
+    description={bookingDetails.description}
+    date={bookingDetails.booking_date}
+    status={bookingDetails.status}
+    location={bookingDetails.booking_location}
+    fileUrl={bookingDetails.file_url}
+    thumbnails={[
+      bookingDetails.thumbnail01,
+      bookingDetails.thumbnail02,
+      bookingDetails.thumbnail03,
+      bookingDetails.thumbnail04
+    ].filter(Boolean)} // Filter out null/undefined values
+  />
+)}
 
         <div className="mb-6 mt-4">
           <div className="flex justify-between mb-4">
@@ -283,7 +315,7 @@ const OutwardProgress = () => {
         </div>
         <div className="flex gap-4 my-6">
           {renderActionButton()}
-          
+
           {bookingDetails && bookingDetails.status !== "completed" && (
             <button
               onClick={handleOpenDispute}

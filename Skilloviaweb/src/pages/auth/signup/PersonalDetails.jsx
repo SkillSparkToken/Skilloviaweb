@@ -16,7 +16,7 @@ const PersonalDetails = () => {
     gender: "",
     password: "",
     phone: "",
-    referred_by: "", 
+    referred_by: "",
   });
 
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -24,7 +24,8 @@ const PersonalDetails = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false);
 
   const handleChange = (e) => {
     const { id, value } = e.target;

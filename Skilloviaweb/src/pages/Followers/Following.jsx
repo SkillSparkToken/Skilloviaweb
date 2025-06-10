@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import UserLayout from '../User-Dashboard/UserLayout/UserLayout';
-import BackButton from '../../componets/Back';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import UserLayout from "../User-Dashboard/UserLayout/UserLayout";
+import BackButton from "../../componets/Back";
+import { Link } from "react-router-dom";
 
 const Following = () => {
   const [following, setFollowing] = useState([]);
@@ -11,27 +11,27 @@ const Following = () => {
   useEffect(() => {
     const fetchFollowing = async () => {
       try {
-        const accessToken = localStorage.getItem('accessToken');
-        if (!accessToken) throw new Error('Access token not found');
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) throw new Error("Access token not found");
 
         const response = await fetch(
           `${import.meta.env.VITE_BASE_URL}/follows/getfollowings`,
           {
             headers: {
-              'Authorization': `Bearer ${accessToken}`
-            }
+              Authorization: `Bearer ${accessToken}`,
+            },
           }
         );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch following');
+          throw new Error("Failed to fetch following");
         }
 
         const followingData = await response.json();
         console.log(followingData);
         setFollowing(followingData.data || []);
       } catch (err) {
-        console.error('Error fetching following:', err);
+        console.error("Error fetching following:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -61,10 +61,12 @@ const Following = () => {
 
   return (
     <UserLayout>
-      <div className='px-4'>
+      <div className="px-4">
         <span className="flex mb-4">
-          <BackButton label='' />
-          <h2 className="text-xl text-slate-800 mt-2">Following ({following.length})</h2>
+          <BackButton label="" />
+          <h2 className="text-xl text-slate-800 mt-2">
+            Following ({following.length})
+          </h2>
         </span>
         <div className="space-y-4">
           {following.length === 0 ? (
@@ -78,8 +80,11 @@ const Following = () => {
                 <Link key={user._id} to={`/user-profile/${user._id}`}>
                   <div className="p-2 border border-gray bg-input mb-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                     <div className="flex items-center space-x-4">
-                      <img 
-                        src={user.photourl || 'https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg'}
+                      <img
+                        src={
+                          user.photourl ||
+                          "https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg"
+                        }
                         alt={`${user.firstname} ${user.lastname}`}
                         className="w-12 h-12 rounded-full object-cover"
                       />
@@ -87,8 +92,9 @@ const Following = () => {
                         <h3 className="font-medium">
                           {user.firstname} {user.lastname}
                         </h3>
-                        <p className="text-gray-600 text-[12px]">{user.email}</p>
-                     
+                        <p className="text-gray-600 text-[12px]">
+                          {user.email}
+                        </p>
                       </div>
                     </div>
                   </div>

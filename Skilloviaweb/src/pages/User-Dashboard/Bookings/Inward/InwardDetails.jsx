@@ -40,11 +40,13 @@ const InwardDetails = () => {
         }
 
         const bookingData = await bookingResponse.json();
-        const numericId = parseInt(id, 10);
+        // const numericId = parseInt(id, 10);
+        // const booking = bookingData.data.find(
+        //   (booking) => booking.id === numericId
+        // );
         const booking = bookingData.data.find(
-          (booking) => booking.id === numericId
+          (booking) => booking.id === id // compare with string id directly
         );
-
         if (!booking) {
           throw new Error("Booking not found");
         }
@@ -131,7 +133,7 @@ const InwardDetails = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            status: "completed"
+            status: "completed",
           }),
         }
       );
@@ -149,7 +151,7 @@ const InwardDetails = () => {
       // Close confirmation modal and show success modal
       setShowCompletionModal(false);
       setShowSuccessModal(true);
-      
+
       // Redirect after delay
       setTimeout(() => {
         setShowSuccessModal(false);
@@ -232,16 +234,24 @@ const InwardDetails = () => {
           </div>
         </div>
 
-        <BookCard
-          key={bookingDetails.id}
-          id={bookingDetails.id}
-          title={bookingDetails.title}
-          description={bookingDetails.description}
-          date={bookingDetails.booking_date}
-          status={bookingDetails.status}
-          location={bookingDetails.booking_location}
-          fileUrl={bookingDetails.file_url}
-        />
+       
+
+  <BookCard
+    key={bookingDetails.id}
+    id={bookingDetails.id}
+    title={bookingDetails.title}
+    description={bookingDetails.description}
+    date={bookingDetails.booking_date}
+    status={bookingDetails.status}
+    location={bookingDetails.booking_location}
+    fileUrl={bookingDetails.file_url}
+    thumbnails={[
+      bookingDetails.thumbnail01,
+      bookingDetails.thumbnail02,
+      bookingDetails.thumbnail03,
+      bookingDetails.thumbnail04
+    ].filter(Boolean)} // Filter out null/undefined values
+  />
 
         <div className="space-y-6">
           <div className="my-4">
@@ -336,7 +346,9 @@ const InwardDetails = () => {
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
           <div className="bg-input rounded-lg p-6 max-w-md w-full shadow-xl animate-fadeIn">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-800">Complete Booking</h3>
+              <h3 className="text-xl font-semibold text-gray-800">
+                Complete Booking
+              </h3>
               <button
                 onClick={() => setShowCompletionModal(false)}
                 className="text-gray-500 hover:text-gray-700 transition-colors"
@@ -344,31 +356,40 @@ const InwardDetails = () => {
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="mb-8">
               <p className="text-gray-600 mb-6">
-                Are you sure you want to mark this booking as completed? This action cannot be undone.
+                Are you sure you want to mark this booking as completed? This
+                action cannot be undone.
               </p>
-              
+
               <div className="bg-input p-4 rounded-lg border border-gray">
-                <h4 className="text-sm font-semibold mb-3 text-gray-700">Booking Details:</h4>
+                <h4 className="text-sm font-semibold mb-3 text-gray-700">
+                  Booking Details:
+                </h4>
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-500">ID:</span>
-                    <span className="text-sm font-medium">{bookingDetails?.id}</span>
+                    <span className="text-sm font-medium">
+                      {bookingDetails?.id}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-500">Client:</span>
-                    <span className="text-sm font-medium">{clientProfile?.firstname} {clientProfile?.lastname}</span>
+                    <span className="text-sm font-medium">
+                      {clientProfile?.firstname} {clientProfile?.lastname}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-500">Title:</span>
-                    <span className="text-sm font-medium">{bookingDetails?.title}</span>
+                    <span className="text-sm font-medium">
+                      {bookingDetails?.title}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
-            
+
             <div className="flex gap-4">
               <button
                 onClick={handleCompleteBooking}
@@ -394,7 +415,7 @@ const InwardDetails = () => {
           </div>
         </div>
       )}
-      
+
       {/* Success Modal */}
       {showSuccessModal && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
@@ -402,7 +423,9 @@ const InwardDetails = () => {
             <div className="mb-4 flex justify-center">
               <CheckCircle size={64} className="text-secondary" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">Booking Completed!</h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              Booking Completed!
+            </h3>
             <p className="text-gray-600 mb-6">
               You have successfully marked this booking as completed.
             </p>

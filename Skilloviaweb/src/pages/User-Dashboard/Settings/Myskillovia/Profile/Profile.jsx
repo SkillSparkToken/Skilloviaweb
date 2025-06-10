@@ -9,7 +9,7 @@ const ensureHttps = (url) => {
   if (!url) return null;
   return url.startsWith("http") ? url : `https://${url}`;
 };
-
+// const Profile = ({ photoPreview, setPhotoPreview, setSelectedFile }) => {
 const Profile = () => {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -27,14 +27,14 @@ const Profile = () => {
     weekendsInclusive: false,
     gender: "",
     password: "",
-    confirmPassword: "",
+    confirmPassword: "", // Added confirmPassword
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [apiError, setApiError] = useState("");
-  const [confirmError, setConfirmError] = useState("");
+  const [confirmError, setConfirmError] = useState(""); // For confirm password validation
 
   // Refs for Google Places Autocomplete
   const cityInputRef = useRef(null);
@@ -115,7 +115,7 @@ const Profile = () => {
     try {
       // Clean up previous instance if it exists
       if (autocompleteInstancesRef.current.city) {
-        window.google.maps.event.clearInstanceListeners(
+        google.maps.event.clearInstanceListeners(
           autocompleteInstancesRef.current.city
         );
       }
@@ -141,7 +141,6 @@ const Profile = () => {
           extractAddressComponents(place, "locality") ||
           extractAddressComponents(place, "administrative_area_level_1") ||
           place.name;
-
         // Try to extract postal code from city autocomplete (unreliable, but in case)
         const postalCode = extractAddressComponents(place, "postal_code");
 
@@ -166,7 +165,7 @@ const Profile = () => {
     try {
       // Clean up previous instance if it exists
       if (autocompleteInstancesRef.current.street) {
-        window.google.maps.event.clearInstanceListeners(
+        google.maps.event.clearInstanceListeners(
           autocompleteInstancesRef.current.street
         );
       }
@@ -341,24 +340,69 @@ const Profile = () => {
     }));
   };
 
+  // const handleSubmit = async () => {
+  //   if (!userId) {
+  //     setError("User ID not found");
+  //     return;
+  //   }
+
+  //   // Prevent submit if passwords don't match
+  //   if (
+  //     formData.password &&
+  //     formData.confirmPassword &&
+  //     formData.password !== formData.confirmPassword
+  //   ) {
+  //     setConfirmError("Passwords do not match");
+  //     setError("Please make sure the passwords match.");
+  //     return;
+  //   }
+
+  //   setIsSaving(true);
+  //   setError("");
+  //   setConfirmError("");
+
+  //   try {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_BASE_URL}/users/update/${userId}`,
+  //       {
+  //         method: "PUT",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+  //         },
+  //         body: JSON.stringify({
+  //           email: formData.email,
+  //           firstname: formData.firstName,
+  //           lastname: formData.lastName,
+  //           gender: formData.gender,
+  //           password: formData.password,
+  //           location: formData.city,
+  //           street: formData.streetAddress,
+  //           zip_code: formData.zipCode,
+  //           website: formData.website,
+  //         }),
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error ${response.status}`);
+  //     }
+
+  //     const data = await response.json();
+  //     if (data.status === "success") {
+  //       console.log("Profile updated successfully");
+  //     } else {
+  //       setError(data.message || "Failed to update profile");
+  //     }
+  //   } catch (err) {
+  //     setError("Something went wrong while updating profile");
+  //     console.error("Error updating profile:", err);
+  //   } finally {
+  //     setIsSaving(false);
+  //   }
+  // };
+
   // Custom Toggle Switch Component
-  const Toggle = ({ checked, onChange }) => {
-    return (
-      <button
-        onClick={onChange}
-        type="button"
-        className={`relative w-11 h-6 rounded-full transition-colors ${
-          checked ? "bg-primary" : "bg-gray-500"
-        }`}
-      >
-        <div
-          className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-secondary transition-transform ${
-            checked ? "translate-x-5" : "translate-x-0"
-          }`}
-        />
-      </button>
-    );
-  };
 
   const handleSubmit = async () => {
     if (!userId) {
@@ -449,7 +493,8 @@ const Profile = () => {
 
       const data = await response.json();
       if (data.status === "success") {
-        // Success, you can show a toast or message here
+        console.log("Profile updated successfully");
+        // You can show a success message or toast here
       } else {
         setError(data.message || "Failed to update profile");
       }
@@ -459,6 +504,24 @@ const Profile = () => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const Toggle = ({ checked, onChange }) => {
+    return (
+      <button
+        onClick={onChange}
+        type="button"
+        className={`relative w-11 h-6 rounded-full transition-colors ${
+          checked ? "bg-primary" : "bg-gray-500"
+        }`}
+      >
+        <div
+          className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-secondary transition-transform ${
+            checked ? "translate-x-5" : "translate-x-0"
+          }`}
+        />
+      </button>
+    );
   };
 
   return (
@@ -662,7 +725,8 @@ const Profile = () => {
                           autoComplete="off"
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                          Start typing and select your address from the list to auto-fill your ZIP code.
+                          Start typing and select your address from the list to
+                          auto-fill your ZIP code.
                         </p>
                       </div>
 
@@ -681,7 +745,8 @@ const Profile = () => {
                           autoComplete="off"
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                          Start typing and select your address from the list to auto-fill your ZIP code.
+                          Start typing and select your address from the list to
+                          auto-fill your ZIP code.
                         </p>
                       </div>
 

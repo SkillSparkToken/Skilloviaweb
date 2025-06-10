@@ -197,7 +197,7 @@ const NearByDetails = () => {
 
           <MessageCircleMore
             onClick={handleChatClick}
-            className="text-secondary cursor-pointer h"
+            className="text-secondary cursor-pointer"
           />
         </div>
 
@@ -215,13 +215,13 @@ const NearByDetails = () => {
             <h2 className="text-lg font-semibold">
               {firstname} {lastname}
             </h2>
-            <p className="text-gray-600 text-[12px]">{email}</p>
+            <p className="text-gray-600 text-[12px]">@{email}</p>
             <div className="flex gap-4 mt-1 text-sm text-gray-600">
               <span>
-                <strong>{total_followers || 0}</strong> following
+                <strong>{total_followers || 0}</strong> followers
               </span>
               <span>
-                <strong>{total_following || 0}</strong> followers 
+                <strong>{total_following || 0}</strong> following
               </span>
             </div>
           </div>

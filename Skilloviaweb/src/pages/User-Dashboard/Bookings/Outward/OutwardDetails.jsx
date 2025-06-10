@@ -38,12 +38,14 @@ const OutwardDetails = () => {
         }
 
         const bookingData = await bookingResponse.json();
-        const numericId = parseInt(id);
+        // const numericId = parseInt(id);
 
+        // const booking = bookingData.data.find(
+        //   (booking) => booking.id === numericId
+        // );
         const booking = bookingData.data.find(
-          (booking) => booking.id === numericId
+          (booking) => booking.id === id // compare with string id directly
         );
-
         console.log("Booking Data:vhere...........", booking);
 
         if (!booking) {
@@ -132,9 +134,8 @@ const OutwardDetails = () => {
           bookingUserId: bookingDetails.booking_user_id,
           bookingId: bookingDetails.id,
           title: bookingDetails.title,
-          booked_user_id: bookingDetails.booked_user_id 
-   
-        }
+          booked_user_id: bookingDetails.booked_user_id,
+        },
       });
     } else {
       alert("Cannot submit review: Missing booking information");
@@ -149,8 +150,8 @@ const OutwardDetails = () => {
           bookingId: bookingDetails.id,
           bookedUserId: bookingDetails.booked_user_id,
           bookingTitle: bookingDetails.title,
-          description: bookingDetails.description
-        }
+          description: bookingDetails.description,
+        },
       });
     } else {
       alert("Cannot open dispute: Missing booking information");
@@ -223,16 +224,35 @@ const OutwardDetails = () => {
           </div>
         </div>
 
-        <BookCard
+        {/* <BookCard
           key={bookingDetails.id}
           id={bookingDetails.id}
           title={bookingDetails.title}
           description={bookingDetails.description}
-          date={bookingDetails.booking_date}
+          date={new Date(bookingDetails.booking_date).toLocaleDateString()}
           status={bookingDetails.status}
           location={bookingDetails.booking_location}
           fileUrl={bookingDetails.file_url}
-        />
+        /> */}
+
+
+
+  <BookCard
+    key={bookingDetails.id}
+    id={bookingDetails.id}
+    title={bookingDetails.title}
+    description={bookingDetails.description}
+    date={bookingDetails.booking_date}
+    status={bookingDetails.status}
+    location={bookingDetails.booking_location}
+    fileUrl={bookingDetails.file_url}
+    thumbnails={[
+      bookingDetails.thumbnail01,
+      bookingDetails.thumbnail02,
+      bookingDetails.thumbnail03,
+      bookingDetails.thumbnail04
+    ].filter(Boolean)} // Filter out null/undefined values
+  />
 
         <div className="space-y-6">
           <div className="my-4">

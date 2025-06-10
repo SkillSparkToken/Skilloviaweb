@@ -23,7 +23,53 @@ const ProfileCard = () => {
   const [skillsLoading, setSkillsLoading] = useState(true);
 
   console.log("profileData:", profileData);
+  // Profile step logic
+  // const steps = [
+  //   {
+  //     name: "Profile image",
+  //     completed: !!(profileData && profileData.photourl),
+  //     action: null,
+  //     link: null,
+  //   },
+  //   {
+  //     name: "Add at least one skill",
+  //     completed: skills.length > 0,
+  //     action: null,
+  //     link: "/settings/skill/add",
+  //   },
+  //   {
+  //     name: "Complete KYC",
+  //     completed: !!(profileData && profileData.kyc_status === "verified"),
+  //     action: null,
+  //     link: "/settings/kyc",
+  //   },
+  //   {
+  //     name: "Add payment method",
+  //     completed: !!(profileData && profileData.payment_method),
+  //     action: null,
+  //     link: "/settings/payment",
+  //   },
+  //   {
+  //     name: "Link Stripe",
+  //     completed: !!(profileData && profileData.linked_account),
+  //     action: null,
+  //     link: "/create-stripe-account",
+  //   },
+  //   {
+  //     name: "Fill out bio",
+  //     completed: !!(
+  //       profileData &&
+  //       profileData.bio &&
+  //       profileData.bio.length > 10
+  //     ),
+  //     action: null,
+  //     link: "/settings/profile",
+  //   },
+  // ];
+  // const completedSteps = steps.filter((s) => s.completed).length;
 
+  // console.log("profileData:", profileData);
+  // Profile step logic
   const steps = [
     {
       name: "Profile image",
@@ -39,7 +85,8 @@ const ProfileCard = () => {
     },
     {
       name: "Complete KYC",
-      completed: !!(profileData && profileData.kyc_status === "verified"),
+      completed: !!(profileData && profileData.kyc_status === "approved"),
+
       action: null,
       link: "/settings/kyc",
     },
@@ -57,10 +104,7 @@ const ProfileCard = () => {
     },
     {
       name: "Fill out bio",
-      completed: !!(
-        profileData &&
-        profileData.bio 
-      ),
+      completed: !!(profileData && profileData.bio),
       action: null,
       link: "/settings/profile",
     },
@@ -108,7 +152,75 @@ const ProfileCard = () => {
     }
   };
 
+  // useEffect(() => {
+  //   const fetchProfile = async () => {
+  //     try {
+  //       const accessToken = localStorage.getItem("accessToken");
+  //       if (!accessToken) throw new Error("❌ Access token not found");
+  //       const decodedToken = jwtDecode(accessToken);
+  //       const user_id = decodedToken?.id;
+  //       if (!user_id) throw new Error("❌ User ID not found in token");
+  //       const response = await fetch(
+  //         `${import.meta.env.VITE_BASE_URL}/users/profile/${user_id}`,
+  //         { headers: { Authorization: `Bearer ${accessToken}` } }
+  //       );
+  //       if (!response.ok) throw new Error("❌ Failed to fetch profile");
+  //       const data = await response.json();
+  //       setProfileData({ ...data.data, photourl: data.data.photourl });
+  //     } catch (err) {
+  //       setError(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchProfile();
+  // }, []);
+  // useEffect(() => {
+  //   const fetchSkills = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${import.meta.env.VITE_BASE_URL}/skills/user/all`,
+  //         { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }
+  //       );
+  //       if (!response.ok) throw new Error("Failed to fetch skills");
+  //       const data = await response.json();
+  //       setSkills(data.data || []);
+  //     } catch (err) {
+  //       setError(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchSkills();
+  // }, []);
 
+  // if (loading) {
+  //   return (
+  //     <UserLayout>
+  //       <div className="flex justify-center items-center h-64">
+  //         <Loader2 className="animate-spin w-12 h-12 text-secondary" />
+  //       </div>
+  //     </UserLayout>
+  //   );
+  // }
+
+  // if (error) {
+  //   return (
+  //     <UserLayout>
+  //       <div className="max-w-4xl px-4 py-8 text-red-500">
+  //         Error loading profile: {error}
+  //       </div>
+  //     </UserLayout>
+  //   );
+  // }
+
+  // if (!profileData) {
+  //   return (
+  //     <UserLayout>
+  //       <div className="max-w-4xl px-4 py-8">No profile data available</div>
+  //     </UserLayout>
+  //   );
+  // }
   // Fetch Profile
   useEffect(() => {
     const fetchProfile = async () => {
@@ -285,10 +397,9 @@ const ProfileCard = () => {
           </Link>
           <div>
             <Link to="/following" className="font-semibold">
+              <p className="font-semibold"> {profileData.total_following}</p>
 
-            <p className="font-semibold">  {profileData.total_following}</p>
-            
-            <div className="text-gray-500">followers</div>
+              <div className="text-gray-500">followers</div>
             </Link>
           </div>
           <Link
