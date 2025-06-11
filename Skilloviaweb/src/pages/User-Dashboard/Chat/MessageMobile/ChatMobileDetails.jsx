@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { ArrowLeft, Loader2, Send } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import UserLayout from "../../UserLayout/UserLayout";
-
 import { jwtDecode } from "jwt-decode"; // Ensure jwt-decode is imported
 
 const ChatInterface = () => {
@@ -19,27 +18,15 @@ const ChatInterface = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // const getSenderId = () => {
-  //   try {
-  //     const decodedToken = JSON.parse(localStorage.getItem('decodedToken'));
-  //     return decodedToken?.id;
-  //   } catch (error) {
-  //     console.error('Error getting sender ID:', error);
-  //     return null;
-  //   }
-  // };
-
   const getSenderId = () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
-
       if (!accessToken) {
         throw new Error("Access token not found");
       }
-
       // Decode the access token to get the user ID (assuming it's a JWT)
       const decodedToken = jwtDecode(accessToken);
-      return decodedToken?.id;
+      return decodedToken?.id || decodedToken?._id;
     } catch (error) {
       console.error("Error getting sender ID:", error);
       return null;
@@ -67,7 +54,6 @@ const ChatInterface = () => {
             },
           }
         );
-
         if (!response.ok) {
           console.error("Failed to mark message as read:", msg.id);
         }
@@ -98,6 +84,8 @@ const ChatInterface = () => {
 
       const data = await response.json();
       if (data.data && data.data.length > messages.length) {
+
+        console.log("New messages:", data.data);
         setMessages(data.data);
         markMessagesAsRead(data.data);
         scrollToBottom();
@@ -118,12 +106,10 @@ const ChatInterface = () => {
         if (!senderId || !userId) {
           throw new Error("Sender ID or User ID not found");
         }
-
         const accessToken = localStorage.getItem("accessToken");
         if (!accessToken) {
           throw new Error("Access token not found");
         }
-
         const response = await fetch(
           `${import.meta.env.VITE_BASE_URL}/message/${senderId}/${userId}`,
           {
@@ -132,11 +118,9 @@ const ChatInterface = () => {
             },
           }
         );
-
         if (!response.ok) {
           throw new Error("Failed to fetch chat history");
         }
-
         const data = await response.json();
         if (data.data) {
           setMessages(data.data);
@@ -163,6 +147,7 @@ const ChatInterface = () => {
         clearInterval(pollingInterval.current);
       }
     };
+    // eslint-disable-next-line
   }, [userId, navigate]);
 
   const handleSubmit = async (e) => {
@@ -215,6 +200,19 @@ const ChatInterface = () => {
 
   const currentUserId = getSenderId();
 
+  // Helper to adapt to multiple date formats
+  const getMessageTime = (msg) => {
+    let dateValue = msg.createdAt;
+    if (dateValue?.$date?.$numberLong) {
+      return new Date(Number(dateValue.$date.$numberLong)).toLocaleTimeString();
+    }
+    if (typeof dateValue === "string") {
+      const d = new Date(dateValue);
+      return isNaN(d.getTime()) ? "" : d.toLocaleTimeString();
+    }
+    return "";
+  };
+
   return (
     <>
       <UserLayout>
@@ -254,27 +252,23 @@ const ChatInterface = () => {
             ) : (
               messages.map((msg) => (
                 <div
-                  key={msg.id}
+                  key={msg._id}
                   className={`flex flex-col ${
-                    msg.sender_id === currentUserId
-                      ? "items-end"
-                      : "items-start"
+                    msg.senderId === currentUserId ? "items-end" : "items-start"
                   }`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-lg p-3 whitespace-pre-line ${
-                      msg.sender_id === currentUserId
-                        ? "bg-secondary text-white"
-                        : "bg-input text-black"
+                    className={`max-w-[80%]  p-3 whitespace-pre-line ${
+                      msg.senderId === currentUserId
+                        ? "bg-secondary  text-white rounded-lg rounded-br-none"
+                        : "bg-slate-300 border-input border text-secondary rounded-lg rounded-bl-none"
                     }`}
                   >
                     {msg.content}
-                  </div>
-                  <span className="text-xs text-gray-500 mt-1">
-                    {new Date(
-                      Number(msg.createdAt?.$date?.$numberLong)
-                    ).toLocaleTimeString()}
+                  <span className="text-xs block text-gray-500 mt-1">
+                    {getMessageTime(msg)}
                   </span>
+                  </div>
                 </div>
               ))
             )}
@@ -305,6 +299,7 @@ const ChatInterface = () => {
         </div>
       </UserLayout>
 
+      {/* MOBILE VIEW */}
       <div className="flex flex-col h-screen bg-[#F6FCEB] max-w-md mx-auto  relative lg:hidden">
         <div className="border border-gray text-slate-800 p-4 flex items-center space-x-4">
           <Link to="/messages" className="hover:bg-green-700 p-1 rounded-full">
@@ -333,29 +328,23 @@ const ChatInterface = () => {
           ) : (
             messages.map((msg) => (
               <div
-                key={msg.id}
+                key={msg._id}
                 className={`flex flex-col ${
-                  msg.sender_id === currentUserId ? "items-end" : "items-start"
+                  msg.senderId === currentUserId ? "items-end" : "items-start"
                 }`}
               >
                 <div
-                  className={`max-w-[80%] rounded-lg p-3 whitespace-pre-line ${
-                    msg.sender_id === currentUserId
-                      ? "bg-secondary text-white"
-                      : "bg-input text-black"
+                  className={`max-w-[80%]  p-3 whitespace-pre-line ${
+                    msg.senderId === currentUserId
+                      ? "bg-secondary  text-white rounded-lg rounded-br-none"
+                      : "bg-slate-300 border-input border text-secondary rounded-lg rounded-bl-none"
                   }`}
                 >
                   {msg.content}
-                </div>
-                {/*<span className="text-xs text-gray-500 mt-1">
-                  {new Date(msg.created_at).toLocaleTimeString()}
-                </span>*/}
-
-                <span className="text-xs text-gray-500 mt-1">
-                  {new Date(
-                    Number(msg.createdAt?.$date?.$numberLong)
-                  ).toLocaleTimeString()}
+                <span className="text-xs block text-gray-500 mt-1">
+                  {getMessageTime(msg)}
                 </span>
+                </div>
               </div>
             ))
           )}
