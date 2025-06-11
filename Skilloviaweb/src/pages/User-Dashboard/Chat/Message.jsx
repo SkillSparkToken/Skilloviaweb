@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { MessageCircle, Search, Send, Loader2 } from "lucide-react";
 import UserLayout from "../UserLayout/UserLayout";
 import ChatMobile from "./MessageMobile/ChatMobile";
-import { jwtDecode } from "jwt-decode"; // Ensure jwt-decode is imported
+import { jwtDecode } from "jwt-decode";
+import { IoLogoWechat } from "react-icons/io5";
 
 const MessagingInterface = () => {
   const [messages, setMessages] = useState([]);
@@ -19,25 +20,12 @@ const MessagingInterface = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Get sender ID from stored decoded token
-  // const getSenderId = () => {
-  //   try {
-  //     const decodedToken = JSON.parse(localStorage.getItem("decodedToken"));
-  //     return decodedToken?.id;
-  //   } catch (error) {
-  //     console.error("Error getting sender ID:", error);
-  //     return null;
-  //   }
-  // };
   const getSenderId = () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
-
       if (!accessToken) {
         throw new Error("Access token not found");
       }
-
-      // Decode the access token to get the user ID (assuming it's a JWT)
       const decodedToken = jwtDecode(accessToken);
       return decodedToken?.id;
     } catch (error) {
@@ -88,9 +76,7 @@ const MessagingInterface = () => {
       if (!accessToken) throw new Error("Access token not found");
 
       const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/message/${senderId}/${
-          selectedChat.userId
-        }`,
+        `${import.meta.env.VITE_BASE_URL}/message/${senderId}/${selectedChat.userId}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -148,9 +134,8 @@ const MessagingInterface = () => {
           const formattedUsers = data.data.map((user) => ({
             id: user.user_id,
             name: user.name,
-            message: user.lastmessage || "Recent..",
-            time: formatTime(user.lastmessagetime) || "1 mins",
-            unreadCount: user.unreadmessagecount || 0,
+            time: formatTime(user.lastMessageTime),
+            unreadCount: user.unreadMessageCount || 0,
             photoUrl: user.photourl
               ? `${user.photourl}`
               : "https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg",
@@ -167,65 +152,71 @@ const MessagingInterface = () => {
 
     fetchUsers();
 
-    // Cleanup any existing polling interval
     return () => {
       if (pollingInterval.current) {
         clearInterval(pollingInterval.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Set up polling when a chat is selected
   useEffect(() => {
     if (selectedChat?.userId) {
-      // Initial fetch and scroll
       fetchNewMessages();
       scrollToBottom();
 
-      // Set up polling
       pollingInterval.current = setInterval(fetchNewMessages, 3000);
 
-      // Cleanup
       return () => {
         if (pollingInterval.current) {
           clearInterval(pollingInterval.current);
         }
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChat?.userId]);
+
   const formatTime = (timestamp) => {
     if (!timestamp) return null;
     const date = new Date(timestamp);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMinutes = Math.floor(diffMs / 60000);
 
-    // Check if message is from today
-    const today = new Date();
-    const isToday =
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear();
-
-    if (isToday) {
-      // For today's messages, just show the time
+    if (diffMinutes < 60) {
+      return `${diffMinutes <= 0 ? 1 : diffMinutes} min${diffMinutes === 1 ? "" : "s"} ago`;
+    }
+    // If today, show time
+    if (
+      date.getDate() === now.getDate() &&
+      date.getMonth() === now.getMonth() &&
+      date.getFullYear() === now.getFullYear()
+    ) {
       return date
         .toLocaleString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-          hour12: true,
-        })
-        .toLowerCase();
-    } else {
-      // For older messages, show date and time
-      return date
-        .toLocaleString("en-US", {
-          month: "short",
-          day: "numeric",
           hour: "numeric",
           minute: "numeric",
           hour12: true,
         })
         .toLowerCase();
     }
+    // If yesterday
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    if (
+      date.getDate() === yesterday.getDate() &&
+      date.getMonth() === yesterday.getMonth() &&
+      date.getFullYear() === yesterday.getFullYear()
+    ) {
+      return "Yesterday";
+    }
+    // Else, show date
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
   };
+
   const fetchChatHistory = async (userId) => {
     setChatLoading(true);
     try {
@@ -316,11 +307,24 @@ const MessagingInterface = () => {
 
   const currentUserId = getSenderId();
 
+  // Helper for date formatting for chat bubbles (from ChatInterface)
+  const getMessageTime = (msg) => {
+    let dateValue = msg.createdAt ?? msg.created_at;
+    if (dateValue?.$date?.$numberLong) {
+      return new Date(Number(dateValue.$date.$numberLong)).toLocaleTimeString();
+    }
+    if (typeof dateValue === "string") {
+      const d = new Date(dateValue);
+      return isNaN(d.getTime()) ? "" : d.toLocaleTimeString();
+    }
+    return "";
+  };
+
   return (
     <UserLayout>
       <div className="hidden lg:flex h-screen px-[6rem] pt-[4rem]">
         {/* Chat List */}
-        <div className="w-80">
+        <div className="w-80 shadow ">
           <div className="p-4">
             <div className="relative">
               <Search
@@ -334,19 +338,23 @@ const MessagingInterface = () => {
               />
             </div>
           </div>
-
-          <div className="overflow-y-auto">
+          <div className="overflow-y-auto px-3">
             {loading ? (
               <div className="flex justify-center items-center h-40">
                 <Loader2 className="w-8 h-8 animate-spin text-green-500" />
               </div>
             ) : error ? (
               <div className="text-red-500 text-center p-4">{error}</div>
+            ) : messages.length === 0 ? (
+             <div className="p-8 text-center flex flex-col text-secondary items-center h-[20rem] justify-center text-gray-400">
+             <IoLogoWechat size={48} className="mx-auto mb-2 text-secondary" />
+             <span>No messages for now... they'll appear here when you have them</span>
+           </div>
             ) : (
               messages.map((chat) => (
                 <div
                   key={chat.id}
-                  className="flex items-center p-4 hover:bg-gray-50 cursor-pointer"
+                  className="flex items-center border bg-input rounded-lg border-gray p-2 hover:bg-gray-50 cursor-pointer"
                   onClick={() => fetchChatHistory(chat.id)}
                 >
                   <img
@@ -356,9 +364,11 @@ const MessagingInterface = () => {
                   />
                   <div className="ml-4 flex-1">
                     <div className="flex justify-between items-center">
-                      <h3 className="font-medium">{chat.name}</h3>
-                      <span className="block">
+                      <span className="b">
+                        <h3 className="font-medium">{chat.name}</h3>
                         <p className="text-sm text-gray-500">{chat.time}</p>
+                      </span>
+                      <span className="block">
                         {chat.unreadCount > 0 && (
                           <span className="bg-green-500  text-white text-sm font-medium px-2 py-0.5 rounded-full min-w-[20px] text-center">
                             {chat.unreadCount}
@@ -376,13 +386,12 @@ const MessagingInterface = () => {
             )}
           </div>
         </div>
-
         {/* Chat Window */}
-        <div className="flex-1 flex flex-col bg-input rounded">
+        <div className="flex-1 flex flex-col bg-input rounded h-[calc(100vh-4rem)] min-h-0">
           {selectedChat ? (
             <>
               {/* Chat Header */}
-              <div className="flex items-center p-4 bg-gray-50">
+              <div className="flex items-center p-4 bg-gray-50 flex-shrink-0">
                 <img
                   src={
                     messages.find((m) => m.id === selectedChat.userId)?.photoUrl
@@ -394,43 +403,49 @@ const MessagingInterface = () => {
                   {messages.find((m) => m.id === selectedChat.userId)?.name}
                 </h2>
               </div>
-
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {chatLoading ? (
                   <div className="flex justify-center items-center h-full">
                     <Loader2 className="w-8 h-8 animate-spin text-green-500" />
                   </div>
+                ) : selectedChat.messages.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                    <MessageCircle size={48} className="mx-auto mb-2" />
+                    <span>No messages yet</span>
+                  </div>
                 ) : (
-                  selectedChat.messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex ${
-                        message.sender_id === currentUserId
-                          ? "justify-end"
-                          : "justify-start"
-                      }`}
-                    >
+                  selectedChat.messages.map((msg) => {
+                    const isCurrentUser =
+                      msg.sender_id === currentUserId ||
+                      msg.senderId === currentUserId;
+                    return (
                       <div
-                        className={`max-w-xs lg:max-w-md xl:max-w-lg rounded-lg p-3 ${
-                          message.sender_id === currentUserId
-                            ? "bg-green-600 text-white"
-                            : "bg-white text-gray-800"
+                        key={msg._id}
+                        className={`flex flex-col ${
+                          isCurrentUser ? "items-end" : "items-start"
                         }`}
                       >
-                        <p className="whitespace-pre-line">{message.content}</p>
-                        <span className="text-xs opacity-75 mt-1 block">
-                          {formatTime(message.created_at)}
-                        </span>
+                        <div
+                          className={`max-w-[80%] p-3 whitespace-pre-line ${
+                            isCurrentUser
+                              ? "bg-secondary text-white rounded-lg rounded-br-none"
+                              : "bg-slate-300  text-gray-800 rounded-lg rounded-bl-none"
+                          }`}
+                        >
+                          {msg.content}
+                          <span className="text-xs block text-gray-500 mt-1">
+                            {getMessageTime(msg)}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
                 <div ref={messagesEndRef} />
               </div>
-
               {/* Message Input */}
-              <div className="p-4 bg-gray-50">
+              <div className="p-4 bg-gray-50 flex-shrink-0 sticky bottom-0 left-0 right-0 z-10">
                 <form onSubmit={handleSendMessage} className="relative">
                   <input
                     type="text"
@@ -461,7 +476,6 @@ const MessagingInterface = () => {
           )}
         </div>
       </div>
-
       <ChatMobile />
     </UserLayout>
   );
