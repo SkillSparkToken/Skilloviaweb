@@ -61,10 +61,12 @@ import CreateStripeAccount from "./pages/Stripe/CreateS";
 import GoogleAuthHandler from "./pages/GoogleAuthHandler";
 import TokenHandler from "./TokenHandler";
 import OpenDisputePage from "./pages/Dispute-Review/Dispute/Dispute";
-import Review from "./pages/Dispute-Review/Review/Review";
 import ExploreAllCategories from "./pages/User-Dashboard/Explore/ExploreViewAll";
+import Review from "./pages/Dispute-Review/Review/Review";
 import TermsAndConditions from "./pages/User-Dashboard/Settings/Legal-Support/Terms&Condition";
 import PrivacyPolicy from "./pages/User-Dashboard/Settings/Legal-Support/PrivacyPolicy";
+import Privacy from "./pages/faq/Privacy";
+import Terms from "./pages/faq/Terms";
 // import BookingDetails from "./pages/User-Dashboard/Bookings/BookingDetails";
 
 const router = createBrowserRouter([
@@ -78,7 +80,31 @@ const router = createBrowserRouter([
   //   path: "/ex",
   //   element: <ExamplePage/>,
   // },
+  {
+    path: "/terms",
+    element: (
+      <ProtectedRoute>
+        <TermsAndConditions />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/terms-and-condition",
+    element: <Terms />,
+  },
 
+  {
+    path: "/policy",
+    element: (
+      <ProtectedRoute>
+        <PrivacyPolicy />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/privacy-policy",
+    element: <Privacy />,
+  },
   {
     path: "/success",
     element: <Success />,
@@ -178,7 +204,6 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-
   {
     path: "/explore-all",
     element: (
@@ -187,7 +212,6 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-
   {
     path: "/explore-profile",
     element: (
@@ -309,25 +333,6 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <Invite />
-      </ProtectedRoute>
-    ),
-  },
-
-  {
-    path: "/terms",
-    element: (
-      <ProtectedRoute>
-        <TermsAndConditions />
-      </ProtectedRoute>
-    ),
-  },
-
-
-  {
-    path: "/policy",
-    element: (
-      <ProtectedRoute>
-        <PrivacyPolicy />
       </ProtectedRoute>
     ),
   },

@@ -12,6 +12,7 @@ const UserHeader = () => {
     bookings: [],
     followers: [],
     followees: [],
+    message: [],
   });
   const [notificationDropdown, setNotificationDropdown] = useState(false);
 
@@ -29,64 +30,17 @@ const UserHeader = () => {
     return `https://${url}`;
   };
 
-  // const fetchProfile = async () => {
-  //   try {
-  //     const decodedToken = JSON.parse(localStorage.getItem("decodedToken"));
-  //     const user_id = decodedToken?.id;
-
-  //     if (!user_id) {
-  //       throw new Error("User ID not found in token");
-  //     }
-
-  //     const accessToken = localStorage.getItem("accessToken");
-
-  //     if (!accessToken) {
-  //       throw new Error("Access token not found");
-  //     }
-
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_BASE_URL}/users/profile/${user_id}`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch profile");
-  //     }
-
-  //     const data = await response.json();
-  //     const updatedData = {
-  //       ...data.data,
-  //       photourl: ensureHttps(data.data.photourl),
-  //     };
-  //     setProfileData(updatedData);
-  //   } catch (err) {
-  //     console.error("Error fetching profile:", err);
-  //     setError(err.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const fetchProfile = async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
-
       if (!accessToken) {
         throw new Error("❌ Access token not found in localStorage");
       }
-
-      const decodedToken = jwtDecode(accessToken); // ✅ Decode the token
-      console.log("🔑 Decoded Token:", decodedToken); // Debugging log
-
+      const decodedToken = jwtDecode(accessToken);
       const user_id = decodedToken?.id;
       if (!user_id) {
         throw new Error("❌ User ID not found in token");
       }
-
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}/users/profile/${user_id}`,
         {
@@ -95,11 +49,9 @@ const UserHeader = () => {
           },
         }
       );
-
       if (!response.ok) {
         throw new Error("❌ Failed to fetch profile");
       }
-
       const data = await response.json();
       const updatedData = {
         ...data.data,
@@ -113,37 +65,37 @@ const UserHeader = () => {
       setLoading(false);
     }
   };
+
   const fetchNotifications = async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
-
       if (!accessToken) {
         throw new Error("Access token not found");
       }
-
-      // Fetch different types of notifications concurrently
-      const [bookingsRes, followersRes, followeesRes] = await Promise.all([
-        fetch(`${import.meta.env.VITE_BASE_URL}/notifications/bookings`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }),
-        fetch(`${import.meta.env.VITE_BASE_URL}/notifications/follower`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }),
-        fetch(`${import.meta.env.VITE_BASE_URL}/notifications/followees`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }),
-      ]);
-
-      // Parse responses
+      const [bookingsRes, followersRes, followeesRes, messageRes] =
+        await Promise.all([
+          fetch(`${import.meta.env.VITE_BASE_URL}/notifications/bookings`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }),
+          fetch(`${import.meta.env.VITE_BASE_URL}/notifications/follower`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }),
+          fetch(`${import.meta.env.VITE_BASE_URL}/notifications/followees`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }),
+          fetch(`${import.meta.env.VITE_BASE_URL}/notifications/message`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }),
+        ]);
       const bookingsData = await bookingsRes.json();
       const followersData = await followersRes.json();
       const followeesData = await followeesRes.json();
-
-      // Update notifications state
+      const messageData = await messageRes.json();
       setNotifications({
         bookings: bookingsData.data || [],
         followers: followersData.data || [],
         followees: followeesData.data || [],
+        message: messageData.data || [],
       });
     } catch (err) {
       console.error("Error fetching notifications:", err);
@@ -155,37 +107,47 @@ const UserHeader = () => {
     return (
       notifications.bookings.length +
       notifications.followers.length +
-      notifications.followees.length
+      notifications.followees.length +
+      notifications.message.length
     );
   };
 
+  // Listen for profile updates from anywhere in the app
   useEffect(() => {
     fetchProfile();
     fetchNotifications();
+
+    const handleProfileUpdated = () => {
+      setLoading(true);
+      fetchProfile();
+    };
+    window.addEventListener("profileUpdated", handleProfileUpdated);
+    return () => {
+      window.removeEventListener("profileUpdated", handleProfileUpdated);
+    };
+    // eslint-disable-next-line
   }, []);
 
-  // Render notifications dropdown
   const renderNotificationsDropdown = () => {
     const allNotifications = [
       ...notifications.bookings.map((n) => ({ ...n, type: "bookings" })),
       ...notifications.followers.map((n) => ({ ...n, type: "followers" })),
       ...notifications.followees.map((n) => ({ ...n, type: "followees" })),
+      ...notifications.message.map((n) => ({ ...n, type: "message" })),
     ];
-
     return (
-      <div className="lg:absolute right-0 mt-5 lg:w-80 fixed w-full bg-input border border-secondary md:rounded-lg py-2 z-50">
+      <div className="lg:absolute right-0 mt-5 lg:w-80 fixed h-[20rem] overflow-y-auto w-full bg-input border border-secondary md:rounded-lg py-2 z-50">
         <div className="px-4 py-4 b rounded-b-2xl">
           <h3 className="font-semibold">Notifications</h3>
           {allNotifications.map((notification) => (
             <div
-              key={`${notification.type}-${notification.id}`}
+              key={`${notification.type}-${notification._id}`}
               className="p-2 bg-input border border-gray my-2 rounded-md"
             >
               <p className="text-secondary text-[13px] font-semibold">
-                {" "}
-                {notification.title}{" "}
+                {notification.title}
               </p>
-              <p className="text-[12px]"> {notification.description} </p>
+              <p className="text-[12px]">{notification.description}</p>
             </div>
           ))}
         </div>
@@ -228,7 +190,7 @@ const UserHeader = () => {
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 lg:space-x-9">
           {/* Location */}
           <Link
             to="/settings/profile"
@@ -237,7 +199,7 @@ const UserHeader = () => {
             <MapPin className="h-5 w-5 text-secondary" />
             <section className="block">
               <p className="font-semibold capitalize leading-[12px] text-secondary text-[14px] block">
-                {profileData?.location || "Not set"}
+                {profileData?.locationName || "Not set"}
               </p>
               <span className="text-[12px] text-secondary truncate max-w-[100px] capitalize sm:max-w-none">
                 {profileData?.street || "Not set"}{" "}
@@ -248,21 +210,22 @@ const UserHeader = () => {
 
           {/* Notification Bell */}
           <div className="relative">
-            <Bell
-              className="h-6 w-6 text-gray-700 cursor-pointer"
-              onClick={toggleNotifications}
-            />
-            <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-              {getTotalNotificationCount()}
-            </span>
-
+            <section  onClick={toggleNotifications} className="not bg-red border-2  h-8 w-8 lg:w-10 lg:h-10 rounded-full flex justify-center items-center border-secondary">
+              <Bell
+               
+                className="h-6 w-6 text-secondary cursor-pointer"
+              />
+              <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                {getTotalNotificationCount()}
+              </span>
+            </section>
             {notificationDropdown && renderNotificationsDropdown()}
           </div>
 
-          {/* Profile - Updated section */}
+          {/* Profile Photo */}
           <div className="relative">
             <Link to="/user" className="flex space-x-2">
-              <div className="h-8 w-8 rounded-full bg-gray-200 border-2 border-white cursor-pointer relative">
+              <div className="h-10 w-10 rounded-full bg-gray-200 border-2 border-white cursor-pointer relative">
                 {loading ? (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Loader2 className="animate-spin w-4 h-4 text-secondary" />

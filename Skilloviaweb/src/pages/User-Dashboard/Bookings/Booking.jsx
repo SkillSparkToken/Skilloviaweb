@@ -1,7 +1,15 @@
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import UserLayout from "../UserLayout/UserLayout";
-import { Loader2, ArrowUpRight, ArrowDownLeft, X, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Loader2,
+  ArrowUpRight,
+  ArrowDownLeft,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 const BookingCard = ({
   id,
@@ -63,7 +71,7 @@ const BookingCard = ({
                   alt="Booking"
                   className="w-28 h-28 rounded-lg object-cover"
                 />
-                
+
                 {/* Overlay for multiple images */}
                 {hasMultipleImages && (
                   <div
@@ -71,7 +79,9 @@ const BookingCard = ({
                     className="absolute inset-0 bg-black bg-opacity-40 rounded-lg flex items-center justify-center cursor-pointer hover:bg-opacity-50 transition-all"
                   >
                     <div className="text-white text-center">
-                      <div className="text-xs font-medium">+{images.length - 1}</div>
+                      <div className="text-xs font-medium">
+                        +{images.length - 1}
+                      </div>
                       <div className="text-xs">View more</div>
                     </div>
                   </div>
@@ -79,7 +89,7 @@ const BookingCard = ({
               </div>
             )}
           </div>
-          
+
           <div className="flex-1">
             <div className="flex justify-between items-start">
               <h3 className="font-medium text-gray-900 text-[12px] lg:text-[20px]">
@@ -92,16 +102,13 @@ const BookingCard = ({
                       ? `/outward-progress/${id}`
                       : `/inward-details/${id}`
                   }
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className=" hover:bg-gray-100 bg-secondary p-2 px-4 hidden lg:block text-white rounded-lg capitalize text-[12px] transition-colors"
                   title={`${
                     type.charAt(0).toUpperCase() + type.slice(1)
                   } Booking Details`}
                 >
-                  {type === "outward" ? (
-                    <ArrowUpRight className="w-4 h-4 text-gray-600" />
-                  ) : (
-                    <ArrowDownLeft className="w-4 h-4 text-gray-600" />
-                  )}
+                 
+                  view progress
                 </Link>
               </div>
             </div>
@@ -119,9 +126,24 @@ const BookingCard = ({
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
               </span>
+          
             </div>
           </div>
         </div>
+        <Link
+                  to={
+                    type === "outward"
+                      ? `/outward-progress/${id}`
+                      : `/inward-details/${id}`
+                  }
+                  className=" hover:bg-gray-100 bg-secondary p-2 justify-center px-4 lg:hidden flex mt-4 text-white rounded-lg capitalize text-[12px] transition-colors"
+                  title={`${
+                    type.charAt(0).toUpperCase() + type.slice(1)
+                  } Booking Details`}
+                >
+                 
+                  view progress
+                </Link>
       </div>
 
       {/* Image Gallery Modal */}
@@ -177,8 +199,8 @@ const BookingCard = ({
                     onClick={() => goToImage(index)}
                     className={`flex-shrink-0 ${
                       index === currentImageIndex
-                        ? 'ring-2 ring-white ring-opacity-60'
-                        : 'opacity-70 hover:opacity-100'
+                        ? "ring-2 ring-white ring-opacity-60"
+                        : "opacity-70 hover:opacity-100"
                     }`}
                   >
                     <img
@@ -298,8 +320,8 @@ const Bookings = () => {
                   booking.thumbnail01,
                   booking.thumbnail02,
                   booking.thumbnail03,
-                  booking.thumbnail04
-                ].filter(Boolean)} // Filter out null/undefined values
+                  booking.thumbnail04,
+                ].filter(Boolean)} 
                 type={activeTab}
               />
             ))}

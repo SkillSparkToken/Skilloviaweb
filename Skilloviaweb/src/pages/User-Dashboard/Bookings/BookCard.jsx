@@ -1,7 +1,18 @@
-import React, { useState } from 'react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const BookCard = ({ id, title, description, date, status, location, fileUrl, thumbnails, type }) => {
+import React, { useState } from "react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
+
+const BookCard = ({
+  id,
+  title,
+  description,
+  date,
+  status,
+  location,
+  fileUrl,
+  thumbnails,
+  type,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -51,7 +62,7 @@ const BookCard = ({ id, title, description, date, status, location, fileUrl, thu
                   alt="Booking"
                   className="w-28 h-28 rounded-lg object-cover"
                 />
-                
+
                 {/* Overlay for multiple images */}
                 {hasMultipleImages && (
                   <div
@@ -59,7 +70,9 @@ const BookCard = ({ id, title, description, date, status, location, fileUrl, thu
                     className="absolute inset-0 bg-black bg-opacity-40 rounded-lg flex items-center justify-center cursor-pointer hover:bg-opacity-50 transition-all"
                   >
                     <div className="text-white text-center">
-                      <div className="text-xs font-medium">+{images.length - 1}</div>
+                      <div className="text-xs font-medium">
+                        +{images.length - 1}
+                      </div>
                       <div className="text-xs">View more</div>
                     </div>
                   </div>
@@ -67,20 +80,26 @@ const BookCard = ({ id, title, description, date, status, location, fileUrl, thu
               </div>
             )}
           </div>
-          
+
           <div className="flex-1">
             <div className="flex justify-between items-start">
-              <h3 className="font-medium text-gray-900 text-[12px] lg:text-[20px]">{title}</h3>
+              <h3 className="font-medium text-gray-900 text-[12px] lg:text-[20px]">
+                {title}
+              </h3>
               <div className="flex gap-2"></div>
             </div>
-            <p className="text-sm text-gray-600 mt-1 line-clamp-2">{description}</p>
+            <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+              {description}
+            </p>
             <p className="text-sm text-gray-600 mt-1 line-clamp-2">{date}</p>
             <div className="flex items-center gap-4 mt-2">
-              <span className={`px-2 py-1 text-xs rounded-lg ${
-                status === 'accepted' 
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-yellow-100 text-yellow-800'
-              }`}>
+              <span
+                className={`px-2 py-1 text-xs rounded-lg ${
+                  status === "accepted"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-yellow-100 text-yellow-800"
+                }`}
+              >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
               </span>
             </div>
@@ -141,8 +160,8 @@ const BookCard = ({ id, title, description, date, status, location, fileUrl, thu
                     onClick={() => goToImage(index)}
                     className={`flex-shrink-0 ${
                       index === currentImageIndex
-                        ? 'ring-2 ring-white ring-opacity-60'
-                        : 'opacity-70 hover:opacity-100'
+                        ? "ring-2 ring-white ring-opacity-60"
+                        : "opacity-70 hover:opacity-100"
                     }`}
                   >
                     <img
