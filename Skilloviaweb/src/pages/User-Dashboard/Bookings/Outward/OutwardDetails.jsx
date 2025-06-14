@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import UserLayout from "../../UserLayout/UserLayout";
@@ -5,6 +6,7 @@ import BackButton from "../../../../componets/Back";
 import BookCard from "../BookCard";
 import { Loader2, MessageCircleMore } from "lucide-react";
 import DynamicGoogleMap from "../../../../componets/Map/Map";
+import FloatingChatButton from "../../../../componets/FloatingChat";
 
 const OutwardDetails = () => {
   const { id } = useParams();
@@ -57,7 +59,8 @@ const OutwardDetails = () => {
         // Then fetch technician profile using the booking's technician ID
         const profileResponse = await fetch(
           `${import.meta.env.VITE_BASE_URL}/users/basic/profile/${
-            booking.booking_user_id
+            booking.booked_user_id
+            
           }`,
           {
             headers: {
@@ -72,6 +75,7 @@ const OutwardDetails = () => {
         }
 
         const profileData = await profileResponse.json();
+        console.log("Technician Profile:", profileData.data);
         setTechnicianProfile(profileData.data);
       } catch (err) {
         setError(err.message);
@@ -159,14 +163,12 @@ const OutwardDetails = () => {
   };
 
   const handleChatClick = () => {
-    if (technicianProfile) {
-      navigate(`/chat/${id}`, {
+    if (technicianProfile && bookingDetails) {
+      navigate(`/chat/${bookingDetails.booked_user_id}`, {
         state: {
-          userId: id,
+          userId: bookingDetails.booked_user_id,
           userName: `${technicianProfile.firstname} ${technicianProfile.lastname}`,
-          userPhoto: technicianProfile.photourl
-            ? `${technicianProfile.photourl}`
-            : null,
+          userPhoto: technicianProfile.photourl ? `${technicianProfile.photourl}` : null,
         },
       });
     }
@@ -196,6 +198,7 @@ const OutwardDetails = () => {
 
   return (
     <UserLayout>
+       <FloatingChatButton onClick={handleChatClick} />
       <div className="max-w-4xl mx-auto px-4">
         <div className="flex items-center gap-2 mb-6">
           <BackButton label="Booking Details" />
@@ -224,35 +227,24 @@ const OutwardDetails = () => {
           </div>
         </div>
 
-        {/* <BookCard
+     
+
+        <BookCard
           key={bookingDetails.id}
           id={bookingDetails.id}
           title={bookingDetails.title}
           description={bookingDetails.description}
-          date={new Date(bookingDetails.booking_date).toLocaleDateString()}
+          date={bookingDetails.booking_date}
           status={bookingDetails.status}
           location={bookingDetails.booking_location}
           fileUrl={bookingDetails.file_url}
-        /> */}
-
-
-
-  <BookCard
-    key={bookingDetails.id}
-    id={bookingDetails.id}
-    title={bookingDetails.title}
-    description={bookingDetails.description}
-    date={bookingDetails.booking_date}
-    status={bookingDetails.status}
-    location={bookingDetails.booking_location}
-    fileUrl={bookingDetails.file_url}
-    thumbnails={[
-      bookingDetails.thumbnail01,
-      bookingDetails.thumbnail02,
-      bookingDetails.thumbnail03,
-      bookingDetails.thumbnail04
-    ].filter(Boolean)} // Filter out null/undefined values
-  />
+          thumbnails={[
+            bookingDetails.thumbnail01,
+            bookingDetails.thumbnail02,
+            bookingDetails.thumbnail03,
+            bookingDetails.thumbnail04,
+          ].filter(Boolean)} // Filter out null/undefined values
+        />
 
         <div className="space-y-6">
           <div className="my-4">
@@ -307,13 +299,7 @@ const OutwardDetails = () => {
         </div>
 
         <div className="flex gap-4 my-6">
-          <button
-            onClick={() => handleBookingAction("accept")}
-            disabled={isProcessing}
-            className="flex-1 bg-green-400 text-white py-3 rounded-full text-[15px] font-medium hover:bg-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isProcessing ? "Processing..." : "Confirm completion"}
-          </button>
+        
           <button
             onClick={handleOpenDispute}
             disabled={isProcessing}

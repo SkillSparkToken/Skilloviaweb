@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Search, MessageCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -39,9 +40,9 @@ const ChatMobile = () => {
           const formattedUsers = data.data.map((user) => ({
             id: user.user_id,
             name: user.name,
-     
-            time: formatTime(user.lastMessageTime), 
-            unreadCount: user.unreadMessageCount || 0, 
+
+            time: formatTime(user.lastMessageTime),
+            unreadCount: user.unreadMessageCount || 0,
             photoUrl: user.photourl
               ? `${user.photourl}`
               : "https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg",
@@ -62,7 +63,6 @@ const ChatMobile = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
-
   const formatTime = (timestamp) => {
     if (!timestamp) return null;
     const date = new Date(timestamp);
@@ -73,7 +73,9 @@ const ChatMobile = () => {
 
     // If within an hour, show X mins ago
     if (diffMinutes < 60) {
-      return `${diffMinutes <= 0 ? 1 : diffMinutes} min${diffMinutes === 1 ? "" : "s"} ago`;
+      return `${diffMinutes <= 0 ? 1 : diffMinutes} min${
+        diffMinutes === 1 ? "" : "s"
+      } ago`;
     }
     // If today, show time
     if (
@@ -128,7 +130,9 @@ const ChatMobile = () => {
         {!loading && !error && users.length === 0 && (
           <div className="p-8 text-center flex flex-col text-secondary items-center h-[20rem] justify-center text-gray-400">
             <IoLogoWechat size={48} className="mx-auto mb-2 text-secondary" />
-            <span>No messages for now... they'll appear here when you have them</span>
+            <span>
+              No messages for now... they'll appear here when you have them
+            </span>
           </div>
         )}
 
@@ -149,8 +153,7 @@ const ChatMobile = () => {
               <div className="ml-4 flex-1">
                 <div className="flex justify-between items-center">
                   <span className="block">
-
-                  <h3 className="font-medium text-gray-900">{user?.name}</h3>
+                    <h3 className="font-medium text-gray-900">{user?.name}</h3>
                     <span className="text-sm text-gray-500">{user?.time}</span>
                   </span>
                   <div className="flex items-center gap-2">

@@ -4,25 +4,32 @@ import UserLayout from "../UserLayout/UserLayout";
 import Verify from "../Verify/Verify";
 import { ChevronRight, Loader2, MapPin, Route, UserX } from "lucide-react";
 import ExploreSkill from "./ExploreSkill"; // Import the new component
-
+import { jwtDecode } from "jwt-decode";
 const ExploreSection = () => {
   const [nearbyPeople, setNearbyPeople] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
   const [error, setError] = useState("");
+  const [profileData, setProfileData] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  const [loading, setLoading] = useState(true);
+
   const [categoriesError, setCategoriesError] = useState("");
   // State for filters
+
   const [stateFilter, setStateFilter] = useState("london");
   const [distanceFilter, setDistanceFilter] = useState("all");
   // User's position from token
   const [userPosition, setUserPosition] = useState(null);
   // User ID from token
   const [userId, setUserId] = useState(null);
-
+  console.log("profileData:", profileData);
   // UK Cities - Official List
   const states = [
     { value: "aberdeen", label: "Aberdeen" },
+    { value: "leeds", label: "Leeds" },
     { value: "armagh", label: "Armagh" },
     { value: "bangor", label: "Bangor" },
     { value: "bath", label: "Bath" },
@@ -52,42 +59,11 @@ const ExploreSection = () => {
     { value: "kingston-upon-hull", label: "Kingston upon Hull" },
     { value: "inverness", label: "Inverness" },
     { value: "lancaster", label: "Lancaster" },
-    { value: "leeds", label: "Leeds" },
     { value: "leicester", label: "Leicester" },
     { value: "lichfield", label: "Lichfield" },
     { value: "lincoln", label: "Lincoln" },
     { value: "liverpool", label: "Liverpool" },
     { value: "london", label: "London" },
-    { value: "manchester", label: "Manchester" },
-    { value: "milton-keynes", label: "Milton Keynes" },
-    { value: "newcastle-upon-tyne", label: "Newcastle upon Tyne" },
-    { value: "newport", label: "Newport" },
-    { value: "newry", label: "Newry" },
-    { value: "norwich", label: "Norwich" },
-    { value: "nottingham", label: "Nottingham" },
-    { value: "oxford", label: "Oxford" },
-    { value: "perth", label: "Perth" },
-    { value: "peterborough", label: "Peterborough" },
-    { value: "plymouth", label: "Plymouth" },
-    { value: "portsmouth", label: "Portsmouth" },
-    { value: "preston", label: "Preston" },
-    { value: "ripon", label: "Ripon" },
-    { value: "salford", label: "Salford" },
-    { value: "salisbury", label: "Salisbury" },
-    { value: "sheffield", label: "Sheffield" },
-    { value: "southampton", label: "Southampton" },
-    { value: "st-albans", label: "St Albans" },
-    { value: "st-asaph", label: "St Asaph" },
-    { value: "st-davids", label: "St Davids" },
-    { value: "stirling", label: "Stirling" },
-    { value: "stoke-on-trent", label: "Stoke-on-Trent" },
-    { value: "sunderland", label: "Sunderland" },
-    { value: "swansea", label: "Swansea" },
-    { value: "truro", label: "Truro" },
-    { value: "wakefield", label: "Wakefield" },
-    { value: "wells", label: "Wells" },
-    { value: "westminster", label: "Westminster" },
-    { value: "wolverhampton", label: "Wolverhampton" },
     { value: "winchester", label: "Winchester" },
     { value: "worcester", label: "Worcester" },
     { value: "york", label: "York" },
@@ -95,10 +71,10 @@ const ExploreSection = () => {
 
   const distances = [
     { value: "all", label: "All Distances" },
-    { value: "200", label: "0 - 5 miles" },
-    { value: "500", label: "6 - 10 miles" },
-    { value: "1000", label: "11 - 20 miles" },
-    { value: "2000", label: "20+ miles" },
+    { value: "8000", label: "0 - 5 miles" }, // 8 km
+    { value: "16000", label: "6 - 10 miles" }, // 16 km
+    { value: "32000", label: "11 - 20 miles" }, // 32 km
+    { value: "64000", label: "20+ miles" }, // 64 km
   ];
 
   const FilterDropdown = ({ icon: Icon, label, value, options, onChange }) => (
@@ -120,24 +96,18 @@ const ExploreSection = () => {
       </select>
     </div>
   );
-
   useEffect(() => {
     try {
       const accessToken = localStorage.getItem("accessToken");
 
-      if (!accessToken) {
-        throw new Error("❌ Access token not found in localStorage");
-      }
+      if (!accessToken) throw new Error("Access token not found");
 
-      const decodedToken = jwtDecode(accessToken); // ✅ Decode the token
+      const decodedToken = jwtDecode(accessToken);
       const user_id = decodedToken?.id;
-      if (!user_id) {
-        throw new Error("❌ User ID not found in token");
-      }
+      if (!user_id) throw new Error("User ID not found");
 
       setUserId(user_id);
 
-      // Check if lat and lon are available in the token
       if (decodedToken?.lat && decodedToken?.lon) {
         const lat = parseFloat(decodedToken.lat);
         const lon = parseFloat(decodedToken.lon);
@@ -150,30 +120,243 @@ const ExploreSection = () => {
         }
       }
     } catch (err) {
-      // ignore
+      console.error("Token decode error:", err.message);
     }
   }, []);
-  // Fallback to geolocation if no coordinates in token
+
+  // useEffect(() => {
+  //   try {
+  //     const accessToken = localStorage.getItem("accessToken");
+
+  //     if (!accessToken) {
+  //       throw new Error("❌ Access token not found in localStorage");
+  //     }
+
+  //     const decodedToken = jwtDecode(accessToken); // ✅ Decode the token
+  //     const user_id = decodedToken?.id;
+  //     if (!user_id) {
+  //       throw new Error("❌ User ID not found in token");
+  //     }
+
+  //     setUserId(user_id);
+
+  //     // Check if lat and lon are available in the token
+  //     if (decodedToken?.lat && decodedToken?.lon) {
+  //       const lat = parseFloat(decodedToken.lat);
+  //       const lon = parseFloat(decodedToken.lon);
+
+  //       if (!isNaN(lat) && !isNaN(lon)) {
+  //         setUserPosition({
+  //           latitude: lat,
+  //           longitude: lon,
+  //         });
+  //       }
+  //     }
+  //   } catch (err) {
+  //     // ignore
+  //   }
+  // }, []);
+  // const fetchProfile = async () => {
+  //   try {
+  //     const accessToken = localStorage.getItem("accessToken");
+  //     if (!accessToken) throw new Error("Access token not found");
+
+  //     const decodedToken = jwtDecode(accessToken);
+  //     const user_id = decodedToken?.id;
+  //     if (!user_id) throw new Error("User ID not found");
+
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_BASE_URL}/users/profile/${user_id}`,
+
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     );
+
+  //     if (!response.ok) throw new Error("Failed to fetch profile");
+
+  //     const result = await response.json();
+  //     setProfileData({
+  //       ...result.data,
+  //       // photourl: ensureHttps(result.data.photourl),
+  //     });
+  //   } catch (err) {
+  //     console.error("Error fetching profile:", err.message);
+  //     setError(err.message);
+  //   } finally {
+  //     setProfileLoading(false);
+  //   }
+  // };
+
+  // // Now call it in useEffect
+  // useEffect(() => {
+  //   fetchProfile();
+  // }, []);
   useEffect(() => {
-    if (!userPosition && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const userPos = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          };
-          setUserPosition(userPos);
-        },
-        (error) => {
-          // Use default position if geolocation fails
-          setUserPosition({
-            latitude: 6.448270099999999,
-            longitude: 7.5138947,
+    const fetchProfile = async () => {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) throw new Error("Access token not found");
+
+        const decodedToken = jwtDecode(accessToken);
+        const user_id = decodedToken?.id;
+        if (!user_id) throw new Error("User ID not found");
+
+        const response = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/users/profile/${user_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch profile");
+
+        const result = await response.json();
+        setProfileData({
+          ...result.data,
+          // photourl: ensureHttps(result.data.photourl),
+        });
+
+        // Try to get user's geolocation
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const coords = {
+              lat: pos.coords.latitude,
+              lon: pos.coords.longitude,
+            };
+            setUserPosition(coords);
+          },
+          (error) => {
+            console.warn("⚠️ Geolocation failed:", error.message);
+
+            // Fallback to profile location if available
+            if (result.data?.location?.lat && result.data?.location?.lon) {
+              setUserPosition({
+                lat: result.data.location.lat,
+                lon: result.data.location.lon,
+              });
+            } else {
+              console.error("❌ No valid fallback coordinates in profile.");
+            }
+          }
+        );
+      } catch (err) {
+        console.error("Error fetching profile:", err.message);
+        setError(err.message);
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      if (profileLoading || userPosition) return;
+
+      console.log("📍 Attempting to get user location...");
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            console.log("📍 Geolocation successful:", position.coords);
+            setUserPosition({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          },
+          (error) => {
+            console.warn("⚠️ Geolocation failed:", error.message);
+
+            if (profileData?.lat && profileData?.lon) {
+              console.log("📦 Fallback to profile lat/lon:", {
+                lat: profileData.lat,
+                lon: profileData.lon,
+              });
+              setUserPosition({
+                latitude: parseFloat(profileData.lat),
+                longitude: parseFloat(profileData.lon),
+              });
+            } else if (
+              profileData?.location?.coordinates &&
+              Array.isArray(profileData.location.coordinates) &&
+              profileData.location.coordinates.length === 2
+            ) {
+              // 🚨 Fix here: extract $numberDouble values
+              const rawCoords = profileData.location.coordinates;
+              const lon =
+                typeof rawCoords[0] === "object"
+                  ? parseFloat(rawCoords[0]["$numberDouble"])
+                  : parseFloat(rawCoords[0]);
+              const lat =
+                typeof rawCoords[1] === "object"
+                  ? parseFloat(rawCoords[1]["$numberDouble"])
+                  : parseFloat(rawCoords[1]);
+
+              console.log("📦 Fallback to profile location.coordinates:", {
+                lat,
+                lon,
+              });
+
+              setUserPosition({
+                latitude: lat,
+                longitude: lon,
+              });
+            } else {
+              console.error("❌ No valid fallback coordinates in profile.");
+            }
+          }
+        );
+      } else {
+        console.warn("🧭 Geolocation not supported by browser.");
+
+        // Fallback logic repeated here (for browsers without geolocation)
+        if (profileData?.lat && profileData?.lon) {
+          console.log("📦 Fallback to profile lat/lon:", {
+            lat: profileData.lat,
+            lon: profileData.lon,
           });
+          setUserPosition({
+            latitude: parseFloat(profileData.lat),
+            longitude: parseFloat(profileData.lon),
+          });
+        } else if (
+          profileData?.location?.coordinates &&
+          Array.isArray(profileData.location.coordinates) &&
+          profileData.location.coordinates.length === 2
+        ) {
+          const rawCoords = profileData.location.coordinates;
+          const lon =
+            typeof rawCoords[0] === "object"
+              ? parseFloat(rawCoords[0]["$numberDouble"])
+              : parseFloat(rawCoords[0]);
+          const lat =
+            typeof rawCoords[1] === "object"
+              ? parseFloat(rawCoords[1]["$numberDouble"])
+              : parseFloat(rawCoords[1]);
+
+          console.log("📦 Fallback to profile location.coordinates:", {
+            lat,
+            lon,
+          });
+
+          setUserPosition({
+            latitude: lat,
+            longitude: lon,
+          });
+        } else {
+          console.error("❌ No valid fallback coordinates in profile.");
         }
-      );
-    }
-  }, [userPosition]);
+      }
+    };
+
+    fetchLocation();
+  }, [profileLoading, profileData, userPosition]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -217,13 +400,82 @@ const ExploreSection = () => {
     fetchCategories();
   }, []);
 
+  // useEffect(() => {
+  //   const fetchPeople = async () => {
+  //     // Don't fetch if we don't have position data yet
+  //     if (!userPosition) {
+  //       return;
+  //     }
+
+  //     setIsLoading(true);
+  //     setError("");
+
+  //     try {
+  //       const accessToken = localStorage.getItem("accessToken");
+
+  //       if (!accessToken) {
+  //         throw new Error("Authentication required");
+  //       }
+
+  //       let url;
+
+  //       if (distanceFilter === "all") {
+  //         // Use a very large radius (1,000,000 meters) and apply state filter
+  //         url = `${import.meta.env.VITE_BASE_URL}/users/people/nearby/${
+  //           userPosition.latitude
+  //         }/${userPosition.longitude}/1000000?state=${stateFilter}`;
+  //       } else {
+  //         // If distance filter is active, use the /nearby endpoint with coordinates and distance
+  //         //   url = `${import.meta.env.VITE_BASE_URL}/users/people/nearby/${
+  //         //     userPosition.latitude
+  //         //   }/${userPosition.longitude}/${distanceFilter}`;
+  //         // }
+  //         url = `${import.meta.env.VITE_BASE_URL}/users/people/nearby/${
+  //           userPosition.latitude
+  //         }/${userPosition.longitude}/${distanceFilter}?state=${stateFilter}`;
+  //       }
+  //       const response = await fetch(url, {
+  //         method: "GET",
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       });
+
+  //       const data = await response.json();
+
+  //       if (data.status === "success") {
+  //         // Ensure we set an empty array if data.data is null or undefined
+  //         setNearbyPeople(data.data || []);
+  //       } else {
+  //         throw new Error(data.message || "Failed to fetch people");
+  //       }
+  //     } catch (err) {
+  //       setError("Unable to load people. Please try again later.");
+  //       // Set to empty array when there's an error
+  //       setNearbyPeople([]);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchPeople();
+  // }, [stateFilter, distanceFilter, userPosition]); // Re-fetch when filters or position change
+
+  console.log("📍 Distance Filter:", distanceFilter);
+  console.log("📍 State Filter:", stateFilter);
+  console.log("📍 User Position:", userPosition);
+
+  // if (distanceFilter !== "all") {
+  //   console.log("✅ Calling nearby API with URL:", url);
+  // }
+
   useEffect(() => {
     const fetchPeople = async () => {
-      // Don't fetch if we don't have position data yet
       if (!userPosition) {
+        console.log("⏳ Waiting for user position...");
         return;
       }
-
       setIsLoading(true);
       setError("");
 
@@ -236,16 +488,49 @@ const ExploreSection = () => {
 
         let url;
 
+        // if (distanceFilter === "all") {
+        //   // ✅ Use the /within/:address endpoint based on selected city (stateFilter)
+        //   url = `${
+        //     import.meta.env.VITE_BASE_URL
+        //   }/users/people/within/${stateFilter}`;
+        // } else {
+        //   // ✅ Use the /nearby/:lat/:lon/:radius?state=city endpoint
+        //   // Make sure we have userPosition
+        //   if (!userPosition) {
+        //     return;
+        //   }
+
+        //   //   url = `${import.meta.env.VITE_BASE_URL}/users/people/nearby/${
+        //   //     userPosition.latitude
+        //   //   }/${userPosition.longitude}/${distanceFilter}?state=${stateFilter}`;
+        //   // }
+        //   url = `${import.meta.env.VITE_BASE_URL}/users/people/nearby/${
+        //     userPosition.longitude
+        //   }/${userPosition.latitude}/${distanceFilter}?state=${stateFilter}`;
+        // }
+
         if (distanceFilter === "all") {
-          // If no distance filter, use the state filter
           url = `${
             import.meta.env.VITE_BASE_URL
           }/users/people/within/${stateFilter}`;
+          console.log("🌍 Fetching with city-only filter:", url);
         } else {
-          // If distance filter is active, use the /nearby endpoint with coordinates and distance
+          if (!userPosition) {
+            console.warn("⚠️ User position is not yet available.");
+            return;
+          }
+
+          // url = `${import.meta.env.VITE_BASE_URL}/users/people/nearby/${
+          //   userPosition.longitude
+          // }/${userPosition.latitude}/${distanceFilter}?state=${stateFilter}`;
+          // url = `${import.meta.env.VITE_BASE_URL}/users/people/nearby/${
+          //   userPosition.latitude
+          // }/${userPosition.longitude}/${distanceFilter}?state=${stateFilter}`;
           url = `${import.meta.env.VITE_BASE_URL}/users/people/nearby/${
-            userPosition.latitude
-          }/${userPosition.longitude}/${distanceFilter}`;
+            userPosition.lat
+          }/${userPosition.lon}/${distanceFilter}?state=${stateFilter}`;
+
+          console.log("📡 Fetching nearby people:", url);
         }
 
         const response = await fetch(url, {
@@ -259,14 +544,12 @@ const ExploreSection = () => {
         const data = await response.json();
 
         if (data.status === "success") {
-          // Ensure we set an empty array if data.data is null or undefined
           setNearbyPeople(data.data || []);
         } else {
           throw new Error(data.message || "Failed to fetch people");
         }
       } catch (err) {
         setError("Unable to load people. Please try again later.");
-        // Set to empty array when there's an error
         setNearbyPeople([]);
       } finally {
         setIsLoading(false);
@@ -274,17 +557,21 @@ const ExploreSection = () => {
     };
 
     fetchPeople();
-  }, [stateFilter, distanceFilter, userPosition]); // Re-fetch when filters or position change
+  }, [stateFilter, distanceFilter, userPosition]);
 
   // If we're still waiting for user position, show loading
-  if (!userPosition) {
+  if (profileLoading || !userPosition) {
     return (
       <UserLayout>
         <Verify />
         <div className="max-w-4xl mx-auto px-4 rounded-lg">
           <div className="flex justify-center items-center py-16">
             <Loader2 className="animate-spin w-8 h-8 text-gray-500 mr-2" />
-            <p>Loading your location data...</p>
+            <p>
+              {profileLoading
+                ? "Loading your profile..."
+                : "Loading your location data..."}
+            </p>
           </div>
         </div>
       </UserLayout>
@@ -359,7 +646,7 @@ const ExploreSection = () => {
             <div className="flex gap-8 overflow-x-auto pb-4">
               {nearbyPeople.map((person) => (
                 <Link
-                  key={person.id}
+                  key={person.i_d}
                   to={`/user-profile/${person._id}`}
                   className="flex flex-col items-center flex-shrink-0 hover:opacity-90 transition-opacity"
                 >

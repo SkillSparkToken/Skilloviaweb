@@ -14,7 +14,8 @@ import { Star } from "lucide-react";
 const NearByDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  console.log("userId:", id); 
+  console.log("userId:", id); // This should NEVER be undefined
+
   const [profile, setProfile] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

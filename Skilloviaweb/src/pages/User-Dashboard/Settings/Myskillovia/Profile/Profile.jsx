@@ -132,22 +132,35 @@ const Profile = () => {
       cityAutocomplete.addListener("place_changed", () => {
         const place = cityAutocomplete.getPlace();
 
-        if (!place.geometry) {
-          setApiError("No details available for this location");
+        // if (!place.geometry) {
+        //   setApiError("No details available for this location");
+        //   return;
+        // }
+        if (!place.geometry || !place.geometry.location) {
+          setApiError("No geometry data found for the city.");
           return;
         }
-
         const cityName =
           extractAddressComponents(place, "locality") ||
           extractAddressComponents(place, "administrative_area_level_1") ||
           place.name;
         // Try to extract postal code from city autocomplete (unreliable, but in case)
         const postalCode = extractAddressComponents(place, "postal_code");
+        // Get latitude and longitude
+        const lat = place.geometry.location.lat();
+        const lon = place.geometry.location.lng();
 
+        // setFormData((prev) => ({
+        //   ...prev,
+        //   city: cityName || "",
+        //   zipCode: postalCode || prev.zipCode, // Only update if available
+        // }));
         setFormData((prev) => ({
           ...prev,
           city: cityName || "",
-          zipCode: postalCode || prev.zipCode, // Only update if available
+          zipCode: postalCode || prev.zipCode,
+          lat,
+          lon,
         }));
 
         setApiError("");
@@ -182,18 +195,30 @@ const Profile = () => {
       addressAutocomplete.addListener("place_changed", () => {
         const place = addressAutocomplete.getPlace();
 
-        if (!place.geometry) {
-          setApiError("No details available for this address");
+        // if (!place.geometry) {
+        //   setApiError("No details available for this address");
+        //   return;
+        // }
+        if (!place.geometry || !place.geometry.location) {
+          setApiError("No geometry data found for this address.");
           return;
         }
+        const lat = place.geometry.location.lat();
+        const lon = place.geometry.location.lng();
 
         // Option 1: Use the formatted_address directly if available
         if (place.formatted_address) {
           const addressParts = place.formatted_address.split(",");
           const streetPart = addressParts[0];
+          // setFormData((prev) => ({
+          //   ...prev,
+          //   streetAddress: streetPart,
+          // }));
           setFormData((prev) => ({
             ...prev,
             streetAddress: streetPart,
+            lat,
+            lon,
           }));
         } else {
           // Option 2: Extract and combine components
@@ -208,22 +233,40 @@ const Profile = () => {
           if (subpremise)
             fullStreetAddress += (fullStreetAddress ? ", " : "") + subpremise;
 
+          //   if (fullStreetAddress) {
+          //     setFormData((prev) => ({
+          //       ...prev,
+          //       streetAddress: fullStreetAddress,
+          //     }));
+          //   }
+          // }
           if (fullStreetAddress) {
             setFormData((prev) => ({
               ...prev,
               streetAddress: fullStreetAddress,
+              lat,
+              lon,
             }));
           }
         }
-
         const postalCode = extractAddressComponents(place, "postal_code");
         const city =
           extractAddressComponents(place, "locality") ||
           extractAddressComponents(place, "sublocality") ||
           extractAddressComponents(place, "administrative_area_level_1");
 
+        // setFormData((prev) => {
+        //   const updates = {};
+        //   if (postalCode) {
+        //     updates.zipCode = postalCode;
+        //   }
+        //   if (city) {
+        //     updates.city = city;
+        //   }
+        //   return { ...prev, ...updates };
+        // });
         setFormData((prev) => {
-          const updates = {};
+          const updates = { lat, lon }; // ensure lat/lon included even if no city/postal found
           if (postalCode) {
             updates.zipCode = postalCode;
           }
@@ -232,7 +275,6 @@ const Profile = () => {
           }
           return { ...prev, ...updates };
         });
-
         setApiError("");
       });
     } catch (err) {
@@ -290,7 +332,8 @@ const Profile = () => {
             lastName: data.data.lastname || "",
             email: data.data.email || "",
             website: data.data.website || "",
-            city: data.data.location || "",
+            // city: data.data.location || "",
+            city: data.data.locationName || "",
             streetAddress: data.data.street || "",
             zipCode: data.data.zip_code || "",
             gender: data.data.gender || "",
@@ -340,76 +383,13 @@ const Profile = () => {
     }));
   };
 
-  // const handleSubmit = async () => {
-  //   if (!userId) {
-  //     setError("User ID not found");
-  //     return;
-  //   }
-
-  //   // Prevent submit if passwords don't match
-  //   if (
-  //     formData.password &&
-  //     formData.confirmPassword &&
-  //     formData.password !== formData.confirmPassword
-  //   ) {
-  //     setConfirmError("Passwords do not match");
-  //     setError("Please make sure the passwords match.");
-  //     return;
-  //   }
-
-  //   setIsSaving(true);
-  //   setError("");
-  //   setConfirmError("");
-
-  //   try {
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_BASE_URL}/users/update/${userId}`,
-  //       {
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-  //         },
-  //         body: JSON.stringify({
-  //           email: formData.email,
-  //           firstname: formData.firstName,
-  //           lastname: formData.lastName,
-  //           gender: formData.gender,
-  //           password: formData.password,
-  //           location: formData.city,
-  //           street: formData.streetAddress,
-  //           zip_code: formData.zipCode,
-  //           website: formData.website,
-  //         }),
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error ${response.status}`);
-  //     }
-
-  //     const data = await response.json();
-  //     if (data.status === "success") {
-  //       console.log("Profile updated successfully");
-  //     } else {
-  //       setError(data.message || "Failed to update profile");
-  //     }
-  //   } catch (err) {
-  //     setError("Something went wrong while updating profile");
-  //     console.error("Error updating profile:", err);
-  //   } finally {
-  //     setIsSaving(false);
-  //   }
-  // };
-
-  // Custom Toggle Switch Component
 
   const handleSubmit = async () => {
     if (!userId) {
       setError("User ID not found");
       return;
     }
-
+  
     // Validate passwords match
     if (
       formData.password &&
@@ -420,17 +400,17 @@ const Profile = () => {
       setError("Please make sure the passwords match.");
       return;
     }
-
+  
     setIsSaving(true);
     setError("");
     setConfirmError("");
-
+  
     try {
       // 1. Upload profile photo if a new one was selected
       if (selectedFile) {
         const formDataPhoto = new FormData();
         formDataPhoto.append("photo", selectedFile);
-
+  
         const photoResponse = await fetch(
           `${import.meta.env.VITE_BASE_URL}/users/profile/upload`,
           {
@@ -441,13 +421,13 @@ const Profile = () => {
             body: formDataPhoto,
           }
         );
-
+  
         const photoData = await photoResponse.json();
         if (photoData.status === "success") {
           // Update preview and localStorage
           const photoUrl = ensureHttps(photoData.data.photo);
           setPhotoPreview(photoUrl);
-
+  
           const currentProfile = JSON.parse(
             localStorage.getItem("userProfile") || "{}"
           );
@@ -456,14 +436,14 @@ const Profile = () => {
             photourl: photoData.data.photo,
           };
           localStorage.setItem("userProfile", JSON.stringify(updatedProfile));
-
+  
           window.dispatchEvent(new Event("profileUpdated"));
         } else {
           setError("Failed to upload profile photo.");
           return;
         }
       }
-
+  
       // 2. Update the rest of the profile fields
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}/users/update/${userId}`,
@@ -479,21 +459,46 @@ const Profile = () => {
             lastname: formData.lastName,
             gender: formData.gender,
             password: formData.password,
-            location: formData.city,
+            locationName: formData.city,
             street: formData.streetAddress,
             zip_code: formData.zipCode,
             website: formData.website,
+            lat: formData.lat,
+            lon: formData.lon,
           }),
         }
       );
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error ${response.status}`);
       }
-
+  
       const data = await response.json();
       if (data.status === "success") {
-        console.log("Profile updated successfully");
+        // --- START: Update localStorage for city, street, zip code, etc ---
+        const currentProfile = JSON.parse(
+          localStorage.getItem("userProfile") || "{}"
+        );
+        const updatedProfile = {
+          ...currentProfile,
+          city: formData.city,
+          locationName: formData.city, // in case you use either key
+          street: formData.streetAddress,
+          zipCode: formData.zipCode,
+          zip_code: formData.zipCode, // in case you use either key
+          lat: formData.lat,
+          lon: formData.lon,
+          website: formData.website,
+          firstname: formData.firstName,
+          lastname: formData.lastName,
+          gender: formData.gender,
+          email: formData.email,
+        };
+        localStorage.setItem("userProfile", JSON.stringify(updatedProfile));
+  
+        window.dispatchEvent(new Event("profileUpdated"));
+        // --- END: Update localStorage for city, street, zip code, etc ---
+  
         // You can show a success message or toast here
       } else {
         setError(data.message || "Failed to update profile");
@@ -505,7 +510,6 @@ const Profile = () => {
       setIsSaving(false);
     }
   };
-
   const Toggle = ({ checked, onChange }) => {
     return (
       <button

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from "react";
 import { ArrowLeft, Loader2, Send } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -45,7 +46,7 @@ const ChatInterface = () => {
     for (const msg of unreadMessages) {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/message/markasread/${msg.id}`,
+          `${import.meta.env.VITE_BASE_URL}/message/markasread/${msg._id}`,
           {
             method: "PUT",
             headers: {
@@ -84,7 +85,6 @@ const ChatInterface = () => {
 
       const data = await response.json();
       if (data.data && data.data.length > messages.length) {
-
         console.log("New messages:", data.data);
         setMessages(data.data);
         markMessagesAsRead(data.data);
@@ -213,6 +213,15 @@ const ChatInterface = () => {
     return "";
   };
 
+
+  const handleUserClick = (userId) => {
+    if (!userId) {
+      alert("Invalid user ID.");
+      return;
+    }
+    navigate(`/user-profile/${userId}`);
+  };
+
   return (
     <>
       <UserLayout>
@@ -225,7 +234,7 @@ const ChatInterface = () => {
             >
               <ArrowLeft size={24} />
             </Link>
-            <div className="flex items-center space-x-3">
+            <div   onClick={() => handleUserClick(userId)} className="flex items-center space-x-3 cursor-pointer">
               <div className="flex items-center justify-center text-green-600 font-medium">
                 <img
                   src={
@@ -265,9 +274,9 @@ const ChatInterface = () => {
                     }`}
                   >
                     {msg.content}
-                  <span className="text-xs block text-gray-500 mt-1">
-                    {getMessageTime(msg)}
-                  </span>
+                    <span className="text-xs block text-gray-500 mt-1">
+                      {getMessageTime(msg)}
+                    </span>
                   </div>
                 </div>
               ))
@@ -306,7 +315,7 @@ const ChatInterface = () => {
             <ArrowLeft size={24} />
           </Link>
           <div className="flex items-center space-x-3">
-            <div className="flex items-center justify-center text-green-600 font-medium">
+            <div   onClick={() => handleUserClick(userId)} className="flex items-center justify-center text-green-600 font-medium">
               <img
                 src={
                   userPhoto ||
@@ -341,9 +350,9 @@ const ChatInterface = () => {
                   }`}
                 >
                   {msg.content}
-                <span className="text-xs block text-gray-500 mt-1">
-                  {getMessageTime(msg)}
-                </span>
+                  <span className="text-xs block text-gray-500 mt-1">
+                    {getMessageTime(msg)}
+                  </span>
                 </div>
               </div>
             ))

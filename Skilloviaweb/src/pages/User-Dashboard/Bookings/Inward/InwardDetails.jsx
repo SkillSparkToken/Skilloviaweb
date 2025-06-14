@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import UserLayout from "../../UserLayout/UserLayout";
@@ -5,6 +6,7 @@ import BackButton from "../../../../componets/Back";
 import BookCard from "../BookCard";
 import { Loader2, MessageCircleMore, X, CheckCircle } from "lucide-react";
 import DynamicGoogleMap from "../../../../componets/Map/Map";
+import FloatingChatButton from "../../../../componets/FloatingChat";
 
 const InwardDetails = () => {
   const { id } = useParams();
@@ -166,14 +168,12 @@ const InwardDetails = () => {
   };
 
   const handleChatClick = () => {
-    if (clientProfile) {
-      navigate(`/chat/${id}`, {
+    if (clientProfile && bookingDetails) {
+      navigate(`/chat/${bookingDetails.booking_user_id}`, {
         state: {
-          userId: id,
+          userId: bookingDetails.booking_user_id,
           userName: `${clientProfile.firstname} ${clientProfile.lastname}`,
-          userPhoto: clientProfile.photourl
-            ? `https://${clientProfile.photourl}`
-            : null,
+          userPhoto: clientProfile.photourl ? `${clientProfile.photourl}` : null,
         },
       });
     }
@@ -203,6 +203,7 @@ const InwardDetails = () => {
 
   return (
     <UserLayout>
+        <FloatingChatButton onClick={handleChatClick} />
       <div className="max-w-4xl mx-auto px-4">
         <div className="flex items-center gap-2 mb-6">
           <BackButton label="Booking Progress" />
@@ -234,24 +235,22 @@ const InwardDetails = () => {
           </div>
         </div>
 
-       
-
-  <BookCard
-    key={bookingDetails.id}
-    id={bookingDetails.id}
-    title={bookingDetails.title}
-    description={bookingDetails.description}
-    date={bookingDetails.booking_date}
-    status={bookingDetails.status}
-    location={bookingDetails.booking_location}
-    fileUrl={bookingDetails.file_url}
-    thumbnails={[
-      bookingDetails.thumbnail01,
-      bookingDetails.thumbnail02,
-      bookingDetails.thumbnail03,
-      bookingDetails.thumbnail04
-    ].filter(Boolean)} // Filter out null/undefined values
-  />
+        <BookCard
+          key={bookingDetails.id}
+          id={bookingDetails.id}
+          title={bookingDetails.title}
+          description={bookingDetails.description}
+          date={bookingDetails.booking_date}
+          status={bookingDetails.status}
+          location={bookingDetails.booking_location}
+          fileUrl={bookingDetails.file_url}
+          thumbnails={[
+            bookingDetails.thumbnail01,
+            bookingDetails.thumbnail02,
+            bookingDetails.thumbnail03,
+            bookingDetails.thumbnail04,
+          ].filter(Boolean)} // Filter out null/undefined values
+        />
 
         <div className="space-y-6">
           <div className="my-4">

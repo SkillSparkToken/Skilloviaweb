@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import UserLayout from "../../UserLayout/UserLayout";
@@ -210,9 +212,9 @@ const OutwardProgress = () => {
           <button
             onClick={() => handleBookingAction("complete")}
             disabled={isProcessing}
-            className="flex-1 bg-green-400 text-white py-3 rounded-full text-[15px] font-medium hover:bg-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-green-400 text-white py-3 hidden rounded-full text-[15px] font-medium hover:bg-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Mark Complete
+      
           </button>
         );
       case "completed":
@@ -256,23 +258,23 @@ const OutwardProgress = () => {
           <BackButton />
         </span>
         {bookingDetails && (
-  <BookCard
-    key={bookingDetails.id}
-    id={bookingDetails.id}
-    title={bookingDetails.title}
-    description={bookingDetails.description}
-    date={bookingDetails.booking_date}
-    status={bookingDetails.status}
-    location={bookingDetails.booking_location}
-    fileUrl={bookingDetails.file_url}
-    thumbnails={[
-      bookingDetails.thumbnail01,
-      bookingDetails.thumbnail02,
-      bookingDetails.thumbnail03,
-      bookingDetails.thumbnail04
-    ].filter(Boolean)} // Filter out null/undefined values
-  />
-)}
+          <BookCard
+            key={bookingDetails.id}
+            id={bookingDetails.id}
+            title={bookingDetails.title}
+            description={bookingDetails.description}
+            date={bookingDetails.booking_date}
+            status={bookingDetails.status}
+            location={bookingDetails.booking_location}
+            fileUrl={bookingDetails.file_url}
+            thumbnails={[
+              bookingDetails.thumbnail01,
+              bookingDetails.thumbnail02,
+              bookingDetails.thumbnail03,
+              bookingDetails.thumbnail04,
+            ].filter(Boolean)} // Filter out null/undefined values
+          />
+        )}
 
         <div className="mb-6 mt-4">
           <div className="flex justify-between mb-4">

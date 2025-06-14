@@ -1,11 +1,15 @@
+
+
 import React, { useState, useEffect, useRef } from "react";
 import { MessageCircle, Search, Send, Loader2 } from "lucide-react";
 import UserLayout from "../UserLayout/UserLayout";
 import ChatMobile from "./MessageMobile/ChatMobile";
 import { jwtDecode } from "jwt-decode";
 import { IoLogoWechat } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const MessagingInterface = () => {
+
   const [messages, setMessages] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,6 +19,7 @@ const MessagingInterface = () => {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
   const pollingInterval = useRef(null);
+  const navigate = useNavigate();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -46,7 +51,7 @@ const MessagingInterface = () => {
     for (const msg of unreadMessages) {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/message/markasread/${msg.id}`,
+          `${import.meta.env.VITE_BASE_URL}/message/markasread/${msg._id}`,
           {
             method: "PUT",
             headers: {
@@ -76,7 +81,9 @@ const MessagingInterface = () => {
       if (!accessToken) throw new Error("Access token not found");
 
       const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/message/${senderId}/${selectedChat.userId}`,
+        `${import.meta.env.VITE_BASE_URL}/message/${senderId}/${
+          selectedChat.userId
+        }`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -184,7 +191,9 @@ const MessagingInterface = () => {
     const diffMinutes = Math.floor(diffMs / 60000);
 
     if (diffMinutes < 60) {
-      return `${diffMinutes <= 0 ? 1 : diffMinutes} min${diffMinutes === 1 ? "" : "s"} ago`;
+      return `${diffMinutes <= 0 ? 1 : diffMinutes} min${
+        diffMinutes === 1 ? "" : "s"
+      } ago`;
     }
     // If today, show time
     if (
@@ -320,6 +329,15 @@ const MessagingInterface = () => {
     return "";
   };
 
+  const handleUserClick = (userId) => {
+    if (!userId) {
+      alert("Invalid user ID.");
+      return;
+    }
+    navigate(`/user-profile/${userId}`);
+  };
+
+
   return (
     <UserLayout>
       <div className="hidden lg:flex h-screen px-[6rem] pt-[4rem]">
@@ -346,10 +364,15 @@ const MessagingInterface = () => {
             ) : error ? (
               <div className="text-red-500 text-center p-4">{error}</div>
             ) : messages.length === 0 ? (
-             <div className="p-8 text-center flex flex-col text-secondary items-center h-[20rem] justify-center text-gray-400">
-             <IoLogoWechat size={48} className="mx-auto mb-2 text-secondary" />
-             <span>No messages for now... they'll appear here when you have them</span>
-           </div>
+              <div className="p-8 text-center flex flex-col text-secondary items-center h-[20rem] justify-center text-gray-400">
+                <IoLogoWechat
+                  size={48}
+                  className="mx-auto mb-2 text-secondary"
+                />
+                <span>
+                  No messages for now... they'll appear here when you have them
+                </span>
+              </div>
             ) : (
               messages.map((chat) => (
                 <div
@@ -391,7 +414,7 @@ const MessagingInterface = () => {
           {selectedChat ? (
             <>
               {/* Chat Header */}
-              <div className="flex items-center p-4 bg-gray-50 flex-shrink-0">
+              <div onClick={() => handleUserClick(selectedChat.userId)} className="flex cursor-pointer border-b border-gray items-center p-4 bg-gray-50 flex-shrink-0">
                 <img
                   src={
                     messages.find((m) => m.id === selectedChat.userId)?.photoUrl
